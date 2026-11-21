@@ -1,0 +1,1204 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-title" content="用語ドリル">
+<meta name="mobile-web-app-capable" content="yes">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>診断士 用語ドリル</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Old+Mincho:wght@700&display=swap">
+<style>
+/* Layout: one narrow study column (phone first), marksheet and flashcard details, tab bar fixed at the bottom */
+:root{
+  --paper:#F3F4F1; --card:#FFFFFF; --ink:#1B2130; --ink-2:#535B6A; --ink-3:#8A909B; --line:#DCDFE3;
+  --mark:#B8364A; --on-mark:#FFFFFF; --mark-soft:#F7E2E5; --ok:#2C7A57; --ok-soft:#DFF0E7; --warn:#A0650F; --warn-soft:#F6EAD3;
+  --tick:rgba(27,33,48,.5); --focus:#2F5BD3; --shadow:0 1px 2px rgba(27,33,48,.06),0 6px 20px rgba(27,33,48,.06);
+  --s-keizai:#3F6FB5; --s-zaimu:#2F8170; --s-kigyo:#8A5A9E; --s-unei:#A9631F; --s-homu:#9C3F52; --s-joho:#2A7894; --s-chusho:#66752A;
+  --f-display:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho","YuMincho",serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#12151B; --card:#1A1E26; --ink:#E7E9EE; --ink-2:#A8AEBA; --ink-3:#737A88; --line:#2C323D;
+  --mark:#F0798B; --on-mark:#1A1E26; --mark-soft:#3B2027; --ok:#62C394; --ok-soft:#16302A; --warn:#E5AE55; --warn-soft:#3A2C14;
+  --tick:rgba(231,233,238,.42); --focus:#8FB0FF; --shadow:0 1px 2px rgba(0,0,0,.3);
+  --s-keizai:#86AAE2; --s-zaimu:#6CC0AC; --s-kigyo:#C49DD5; --s-unei:#E3A46D; --s-homu:#E58FA1; --s-joho:#6EC1DD; --s-chusho:#B7C66C;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#12151B; --card:#1A1E26; --ink:#E7E9EE; --ink-2:#A8AEBA; --ink-3:#737A88; --line:#2C323D;
+  --mark:#F0798B; --on-mark:#1A1E26; --mark-soft:#3B2027; --ok:#62C394; --ok-soft:#16302A; --warn:#E5AE55; --warn-soft:#3A2C14;
+  --tick:rgba(231,233,238,.42); --focus:#8FB0FF; --shadow:0 1px 2px rgba(0,0,0,.3);
+  --s-keizai:#86AAE2; --s-zaimu:#6CC0AC; --s-kigyo:#C49DD5; --s-unei:#E3A46D; --s-homu:#E58FA1; --s-joho:#6EC1DD; --s-chusho:#B7C66C;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.75;-webkit-text-size-adjust:100%}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.app{max-width:680px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px calc(96px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
+
+/* header */
+.top{display:flex;flex-direction:column;gap:12px}
+.brand{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand h1{font-family:var(--f-display);font-weight:700;font-size:24px;line-height:1.3;margin:0;letter-spacing:.04em;text-wrap:balance}
+.brand p{margin:2px 0 0;color:var(--ink-2);font-size:12.5px;letter-spacing:.04em}
+.settings{position:relative;font-size:13px}
+.settings summary{list-style:none;cursor:pointer;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;background:var(--card);display:inline-flex;align-items:center;gap:6px}
+.settings summary::-webkit-details-marker{display:none}
+.settings[open] summary{color:var(--ink)}
+.settings .panel{margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.settings label{display:flex;flex-direction:column;gap:4px;color:var(--ink-2)}
+.settings select{max-width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+.note-s{margin:0;font-size:12px;color:var(--ink-3)}
+
+.progress{display:flex;flex-direction:column;gap:6px}
+.bar{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--line)}
+.bar i{display:block;height:100%;transition:width .3s}
+.bar .b-yes{background:var(--ok)} .bar .b-unsure{background:var(--warn)} .bar .b-no{background:var(--mark)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:0;font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.legend b{color:var(--ink);font-weight:700}
+.k::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;vertical-align:1px;background:var(--line)}
+.k.yes::before{background:var(--ok)} .k.unsure::before{background:var(--warn)} .k.no::before{background:var(--mark)}
+
+.subjects{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink-2);line-height:1.4}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--sc);margin-right:6px;vertical-align:1px}
+
+/* views */
+.view{display:flex;flex-direction:column;gap:14px}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.seg button{border:0;background:transparent;padding:6px 12px;font-size:13px;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.check{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-2);cursor:pointer}
+.check input{width:16px;height:16px;accent-color:var(--mark)}
+
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px 20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;min-width:0}
+.card-head{display:flex;align-items:center;gap:10px;min-height:34px}
+.card-head .spacer{flex:1}
+.tag{color:var(--sc,var(--ink-2));border:1px solid currentColor;border-radius:999px;padding:1px 10px;font-size:12px;line-height:1.6;white-space:nowrap}
+.state{font-size:12px;color:var(--ink-3)}
+.state.l0{color:var(--mark)} .state.l1{color:var(--warn)} .state.l2{color:var(--ok)}
+.icon-btn{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.icon-btn svg{width:20px;height:20px}
+.icon-btn[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.icon-btn.lg{width:48px;height:48px}
+.icon-btn.lg svg{width:22px;height:22px}
+
+/* flashcard: punched ring hole like a vocabulary card */
+.flash-card{padding-left:34px}
+.flash-card::before{content:"";position:absolute;left:12px;top:24px;width:11px;height:11px;border-radius:50%;background:var(--paper);border:1px solid var(--line)}
+.q-label{margin:0;font-size:12.5px;color:var(--ink-2);letter-spacing:.03em}
+.q-text{margin:0;font-size:17px;line-height:1.85;overflow-wrap:anywhere}
+.q-term{margin:0;font-family:var(--f-display);font-size:28px;line-height:1.4;letter-spacing:.02em;overflow-wrap:anywhere;text-wrap:balance}
+.yomi{display:block;font-family:var(--f-body);font-size:12px;color:var(--ink-3);letter-spacing:.06em;margin-top:2px}
+.answer{border-top:1px dashed var(--line);padding-top:14px;display:flex;flex-direction:column;gap:12px}
+.a-label{margin:0;font-size:12px;color:var(--mark);font-weight:700;letter-spacing:.12em}
+.a-term{margin:0;font-family:var(--f-display);font-size:24px;line-height:1.45;overflow-wrap:anywhere}
+.a-text{margin:0;font-size:16px;line-height:1.85;overflow-wrap:anywhere}
+.point{background:var(--paper);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.point span{font-size:11.5px;font-weight:700;color:var(--ink-2);letter-spacing:.12em}
+.point p{margin:0;font-size:14px;line-height:1.8;overflow-wrap:anywhere}
+.ans-tools{display:flex;flex-wrap:wrap;gap:8px}
+.ghost{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:transparent;border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink-2)}
+.ghost svg{width:15px;height:15px}
+.refs{margin:0;font-size:12px;line-height:1.7;color:var(--ink-2);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.freq{flex:none;font-size:11.5px;color:var(--mark);border:1px solid var(--mark-soft);background:var(--mark-soft);border-radius:999px;padding:0 8px;line-height:1.7;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ai-btn{display:none}
+.has-ai .ai-btn{display:inline-flex}
+
+.actions{display:flex;gap:10px}
+.primary{flex:1;border:0;border-radius:12px;padding:14px;background:var(--ink);color:var(--paper);font-weight:700;font-size:16px;letter-spacing:.06em}
+.grade button{flex:1;border-radius:12px;padding:12px 6px;font-weight:700;font-size:15px;border:1px solid transparent;display:flex;flex-direction:column;align-items:center;line-height:1.3;gap:2px}
+.grade small{font-weight:400;font-size:11px;opacity:.8}
+.g-no{background:var(--mark-soft);color:var(--mark);border-color:var(--mark-soft)}
+.g-unsure{background:var(--warn-soft);color:var(--warn)}
+.g-yes{background:var(--ok-soft);color:var(--ok)}
+.empty{margin:0;padding:24px 16px;text-align:center;color:var(--ink-2);background:var(--card);border:1px dashed var(--line);border-radius:14px}
+
+/* quiz: marksheet look with timing marks on the left edge */
+.sheet{padding-left:36px}
+.sheet::before{content:"";position:absolute;left:12px;top:22px;bottom:22px;width:9px;background:repeating-linear-gradient(to bottom,var(--tick) 0 3px,transparent 3px 15px)}
+.qno{font-family:var(--f-display);font-size:15px;letter-spacing:.06em}
+.choices{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.choice{width:100%;display:flex;align-items:center;gap:12px;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;min-height:50px}
+.bubble{flex:none;display:inline-grid;place-items:center;width:22px;height:34px;border-radius:11px;border:1.5px solid var(--mark);color:var(--mark);font-size:12px;font-weight:700}
+.c-text{flex:1;min-width:0;font-size:15.5px;line-height:1.5;overflow-wrap:anywhere}
+.choice.picked .bubble{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.choice.right{border-color:var(--ok);background:var(--ok-soft)}
+.choice.wrong{border-color:var(--mark);background:var(--mark-soft)}
+.choice:disabled{cursor:default;color:var(--ink)}
+.verdict{margin:0;font-weight:700;font-size:16px}
+.verdict.ok{color:var(--ok)} .verdict.ng{color:var(--mark)}
+.score{font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+
+/* listen */
+.ls-term{margin:0;font-family:var(--f-display);font-size:26px;line-height:1.4;overflow-wrap:anywhere}
+.ls-def{margin:0;font-size:16px;line-height:1.85;overflow-wrap:anywhere}
+.pos{font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.player{display:flex;align-items:center;justify-content:center;gap:22px}
+.play{width:68px;height:68px;border-radius:50%;border:0;background:var(--mark);color:var(--on-mark);display:grid;place-items:center;box-shadow:var(--shadow)}
+.play svg{width:28px;height:28px}
+.ls-status{margin:0;text-align:center;font-size:13px;color:var(--ink-2);min-height:1.75em}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.opts label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--ink-2)}
+.opts label.check{flex-direction:row;align-self:end;padding-bottom:6px}
+.opts select{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--paper);font-size:14px}
+.hint{margin:0;font-size:12.5px;color:var(--ink-3)}
+
+/* list */
+.search{flex:1;min-width:0;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:15px}
+.count{font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.term-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.term-list details{background:var(--card);border:1px solid var(--line);border-radius:12px}
+.term-list summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 12px}
+.term-list summary::-webkit-details-marker{display:none}
+.term-list .t{flex:1;min-width:0;font-weight:700;overflow-wrap:anywhere}
+.term-list .body{padding:0 14px 14px 30px;display:flex;flex-direction:column;gap:10px}
+.term-list .body p.def{margin:0;line-height:1.85;overflow-wrap:anywhere}
+.sdot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--line)}
+.sdot.l0{background:var(--mark)} .sdot.l1{background:var(--warn)} .sdot.l2{background:var(--ok)}
+.tag.small{font-size:11px;padding:0 8px}
+
+/* footer */
+.foot{display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--ink-3);border-top:1px solid var(--line);padding-top:14px}
+.foot p{margin:0}
+.linkish{border:0;background:none;padding:0;color:var(--ink-2);text-decoration:underline;font-size:12px}
+.confirm{display:flex;flex-wrap:wrap;align-items:center;gap:8px;color:var(--ink)}
+.confirm button{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:3px 10px;font-size:12px}
+.confirm .danger{border-color:var(--mark);color:var(--mark)}
+
+/* tab bar */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
+.tabs-in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 9px;text-decoration:none;color:var(--ink-3);font-size:11.5px;letter-spacing:.04em}
+.tabs a svg{width:22px;height:22px}
+.tabs a[aria-current="page"]{color:var(--mark);font-weight:700}
+
+/* AI dialog */
+dialog.ai{width:min(640px,calc(100vw - 24px));max-height:86vh;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);padding:0}
+dialog.ai::backdrop{background:rgba(10,12,18,.45)}
+.ai-in{display:flex;flex-direction:column;gap:12px;padding:16px 18px 18px}
+.ai-head{display:flex;align-items:flex-start;gap:10px}
+.ai-head h2{flex:1;min-width:0;margin:0;font-family:var(--f-display);font-size:21px;line-height:1.4;overflow-wrap:anywhere}
+.ai-log{display:flex;flex-direction:column;gap:10px;max-height:52vh;overflow-y:auto}
+.msg{margin:0;white-space:pre-wrap;line-height:1.85;font-size:14.5px;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;max-width:85%;background:var(--paper);border-radius:12px;padding:8px 12px}
+.msg.wait{color:var(--ink-3)}
+.ai-form{display:flex;gap:8px}
+.ai-form input{flex:1;min-width:0;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+.ai-form button{border:0;border-radius:10px;background:var(--ink);color:var(--paper);padding:0 14px;font-weight:700}
+.ai-foot{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ai-foot .note-s{flex-basis:100%}
+@media (prefers-reduced-motion: reduce){ .bar i{transition:none} }
+@media (min-width:560px){ .q-term{font-size:32px} .brand h1{font-size:26px} }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand">
+      <div>
+        <h1>診断士 用語ドリル</h1>
+        <p>中小企業診断士 1次試験　令和4〜8年度に2問以上出た論点 <span id="total-count"></span></p>
+      </div>
+      <details class="settings" id="settings">
+        <summary>
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z"/></svg>
+          音声の設定
+        </summary>
+        <div class="panel">
+          <label for="voice-select">声
+            <select id="voice-select"><option value="">自動で選ぶ</option></select>
+          </label>
+          <button type="button" class="ghost" id="voice-test">試しに聞く</button>
+          <p class="note-s" id="voice-note">端末に入っている日本語の音声で読み上げます。</p>
+        </div>
+      </details>
+    </div>
+    <div class="progress" aria-label="学習の進み具合">
+      <div class="bar" aria-hidden="true"><i class="b-yes" id="bar-yes"></i><i class="b-unsure" id="bar-unsure"></i><i class="b-no" id="bar-no"></i></div>
+      <p class="legend">
+        <span class="k yes">覚えた <b id="st-yes">0</b></span>
+        <span class="k unsure">あやしい <b id="st-unsure">0</b></span>
+        <span class="k no">まだ <b id="st-no">0</b></span>
+        <span class="k new">未学習 <b id="st-new">0</b></span>
+      </p>
+    </div>
+    <nav class="subjects" id="subjects" aria-label="科目を選ぶ"></nav>
+  </header>
+
+  <main>
+    <!-- 一問一答 -->
+    <section class="view" id="view-flash" aria-label="一問一答">
+      <div class="toolbar">
+        <div class="seg" role="group" aria-label="出題の向き">
+          <button type="button" data-dir="d2t" aria-pressed="true">説明 → 用語</button>
+          <button type="button" data-dir="t2d" aria-pressed="false">用語 → 説明</button>
+        </div>
+        <label class="check"><input type="checkbox" id="flash-weak"> 苦手だけ</label>
+        <label class="check"><input type="checkbox" id="flash-auto"> 自動で読み上げ</label>
+      </div>
+      <article class="card flash-card" id="flash-card">
+        <div class="card-head">
+          <span class="tag" id="fc-subj"></span>
+          <span class="freq" id="fc-freq"></span>
+          <span class="state" id="fc-state"></span>
+          <span class="spacer"></span>
+          <button type="button" class="icon-btn" id="fc-speak" aria-label="問題を読み上げる" aria-pressed="false"></button>
+        </div>
+        <p class="q-label" id="fc-label"></p>
+        <div id="fc-q"></div>
+        <div class="answer" id="fc-a" hidden>
+          <p class="a-label">答え</p>
+          <div id="fc-amain"></div>
+          <div class="point"><span>ポイント</span><p id="fc-point"></p></div>
+          <p class="refs" id="fc-refs"></p>
+          <div class="ans-tools">
+            <button type="button" class="ghost" id="fc-speak-a"></button>
+            <button type="button" class="ghost ai-btn" id="fc-ai"></button>
+          </div>
+        </div>
+      </article>
+      <div class="actions" id="fc-pre"><button type="button" class="primary" id="fc-reveal">答えを見る</button></div>
+      <div class="actions grade" id="fc-post" hidden>
+        <button type="button" class="g-no" data-g="no">まだ<small>もう一度</small></button>
+        <button type="button" class="g-unsure" data-g="unsure">あやしい<small>あとでまた</small></button>
+        <button type="button" class="g-yes" data-g="yes">覚えた<small>たまに出す</small></button>
+      </div>
+      <p class="empty" id="fc-empty" hidden></p>
+    </section>
+
+    <!-- 4択 -->
+    <section class="view" id="view-quiz" aria-label="4択問題" hidden>
+      <div class="toolbar"><span class="score" id="qz-score">今回 0問中 0問正解</span></div>
+      <article class="card sheet">
+        <div class="card-head">
+          <span class="qno" id="qz-no">第1問</span>
+          <span class="tag" id="qz-subj"></span>
+          <span class="spacer"></span>
+          <button type="button" class="icon-btn" id="qz-speak" aria-label="問題と選択肢を読み上げる" aria-pressed="false"></button>
+        </div>
+        <p class="q-label">次の記述に当てはまる用語として、最も適切なものはどれか。</p>
+        <p class="q-text" id="qz-q"></p>
+        <ol class="choices" id="qz-choices"></ol>
+        <div class="answer" id="qz-fb" hidden>
+          <p class="verdict" id="qz-verdict"></p>
+          <div class="point"><span>ポイント</span><p id="qz-point"></p></div>
+          <p class="refs" id="qz-refs"></p>
+          <div class="ans-tools"><button type="button" class="ghost ai-btn" id="qz-ai"></button></div>
+        </div>
+      </article>
+      <div class="actions"><button type="button" class="primary" id="qz-next" hidden>次の問題</button></div>
+    </section>
+
+    <!-- 聞き流し -->
+    <section class="view" id="view-listen" aria-label="聞き流し" hidden>
+      <article class="card">
+        <div class="card-head">
+          <span class="tag" id="ls-subj"></span>
+          <span class="spacer"></span>
+          <span class="pos" id="ls-pos"></span>
+        </div>
+        <p class="ls-term" id="ls-term"></p>
+        <p class="ls-def" id="ls-def"></p>
+        <div class="point" id="ls-pointbox"><span>ポイント</span><p id="ls-point"></p></div>
+        <p class="refs" id="ls-refs"></p>
+      </article>
+      <div class="player">
+        <button type="button" class="icon-btn lg" id="ls-prev" aria-label="前の用語"></button>
+        <button type="button" class="play" id="ls-play" aria-label="読み上げを始める"></button>
+        <button type="button" class="icon-btn lg" id="ls-next" aria-label="次の用語"></button>
+      </div>
+      <p class="ls-status" id="ls-status" aria-live="polite">再生ボタンで、用語、説明、ポイントの順に読み上げます。</p>
+      <div class="opts">
+        <label for="ls-order">順番
+          <select id="ls-order"><option value="seq">科目の順</option><option value="freq">出題の多い順</option><option value="shuffle">シャッフル</option><option value="weak">苦手から</option></select>
+        </label>
+        <label for="ls-gap">用語のあと考える間
+          <select id="ls-gap"><option value="0">なし</option><option value="3">3秒</option><option value="5">5秒</option></select>
+        </label>
+        <label for="ls-rate">速さ
+          <select id="ls-rate"><option value="0.8">ゆっくり</option><option value="1">ふつう</option><option value="1.2">少し速く</option><option value="1.5">速く</option></select>
+        </label>
+        <label class="check"><input type="checkbox" id="ls-point-on" checked> ポイントも読む</label>
+      </div>
+      <p class="hint">通勤中や家事の合間の聞き流し向けです。iPhoneでは画面を消すと読み上げが止まることがあります。</p>
+    </section>
+
+    <!-- 用語一覧 -->
+    <section class="view" id="view-list" aria-label="用語一覧" hidden>
+      <div class="toolbar">
+        <input type="search" class="search" id="list-search" placeholder="用語や説明の言葉で探す" aria-label="用語を検索">
+        <span class="count" id="list-count"></span>
+      </div>
+      <ul class="term-list" id="term-list"></ul>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>用語は、令和4〜8年度（2022〜2026年）の第1次試験の問題冊子を1問ずつ読み、問われた論点を数えて、5年間で2問以上出たものから選んでいます。R8第3問は令和8年度の第3問です。</p>
+    <p>説明は試験対策の要点です。法令や制度は改正されるので、受験年度のテキストとあわせて確認してください。</p>
+    <p class="ai-btn">「AIに詳しく聞く」はClaudeが解説します。初めて使うときに許可の確認が出ます。</p>
+    <p id="sync-label">学習の記録は、このブラウザに保存しています。</p>
+    <div id="reset-area"><button type="button" class="linkish" id="reset-btn">学習の記録を消す</button></div>
+  </footer>
+</div>
+
+<nav class="tabs" aria-label="学習モード">
+  <div class="tabs-in">
+    <a href="#flash" data-view="flash">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6" width="14" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 3.5h11.5a2 2 0 0 1 2 2V16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="7" cy="9.5" r="1.1" fill="currentColor"/></svg>
+      一問一答
+    </a>
+    <a href="#quiz" data-view="quiz">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3.5" width="5" height="7.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="15" y="3.5" width="5" height="7.5" rx="2.5" fill="currentColor" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="13" width="5" height="7.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="15" y="13" width="5" height="7.5" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      4択
+    </a>
+    <a href="#listen" data-view="listen">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 15v-3a8 8 0 0 1 16 0v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="3.5" y="14" width="4.5" height="6.5" rx="1.6" fill="currentColor"/><rect x="16" y="14" width="4.5" height="6.5" rx="1.6" fill="currentColor"/></svg>
+      聞き流し
+    </a>
+    <a href="#list" data-view="list">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="4.8" cy="6.5" r="1.3" fill="currentColor"/><circle cx="4.8" cy="12" r="1.3" fill="currentColor"/><circle cx="4.8" cy="17.5" r="1.3" fill="currentColor"/></svg>
+      用語一覧
+    </a>
+  </div>
+</nav>
+
+<dialog class="ai" id="ai-dialog" aria-labelledby="ai-title">
+  <div class="ai-in">
+    <div class="ai-head">
+      <h2 id="ai-title"></h2>
+      <button type="button" class="icon-btn" id="ai-close" aria-label="閉じる"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="ai-log" id="ai-log" aria-live="polite"></div>
+    <form class="ai-form" id="ai-form">
+      <input type="text" id="ai-input" placeholder="続けて質問する（例：計算例を見せて）" aria-label="続けて質問する" autocomplete="off">
+      <button type="submit" id="ai-send">送る</button>
+    </form>
+    <div class="ai-foot">
+      <button type="button" class="ghost" id="ai-speak"></button>
+      <button type="button" class="ghost" id="ai-stop" hidden>回答を止める</button>
+      <p class="note-s">AIの解説は誤りを含むことがあります。数値や法令の基準はテキストで確かめてください。</p>
+    </div>
+  </div>
+</dialog>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------- 用語データ [科目, 用語, 読み(音声用), 説明, ポイント] ---------- */
+const RAW = [
+["keizai", "消費者余剰", "しょうひしゃよじょう", "消費者が支払ってもよいと考える最大の金額と、実際に支払った金額との差の合計。グラフでは、需要曲線より下で、価格の線より上の部分の面積。", "規制、貿易、課税、独占のあとで、面積がどう変わるかを図で問う。生産者や政府に移った部分（移転）と、失われた部分（死荷重）の区別が分かれ目。", ["R8第16問", "R7第18問", "R6第17問", "R5第21問", "R5第19問", "R5第13問", "R5第12問", "R4第11問"]],
+["keizai", "生産者余剰", "せいさんしゃよじょう", "生産者が実際に受け取った金額と、売ってもよいと考える最低の金額（限界費用）との差の合計。グラフでは、価格の線より下で、供給曲線より上の部分の面積。", "短期では、総収入から可変費用を引いたものに等しい。固定費用は引かない点でつまずきやすい。", ["R8第16問", "R7第18問", "R7第17問", "R6第17問", "R6第16問", "R5第21問", "R5第13問", "R4第12問"]],
+["keizai", "死荷重", "しかじゅう", "課税や独占、価格規制などで取引量が効率的な水準から外れたときに失われる総余剰。厚生損失ともいう。", "課税、独占、価格規制、関税、外部性のどの場面でも出る。図のどの三角形が失われた余剰かを特定させる形が定番。", ["R8第16問", "R7第18問", "R7第17問", "R6第18問", "R6第17問", "R5第20問", "R5第13問"]],
+["keizai", "限界消費性向", "げんかいしょうひせいこう", "所得が1単位増えたときに、消費が増える割合。消費関数の傾き。", "乗数は1÷（1−限界消費性向）なので、限界消費性向が大きいほど乗数は大きい。平均消費性向（消費÷所得）と混同させる選択肢に注意。", ["R8第6問", "R7第7問", "R6第7問", "R6第5問", "R5第7問", "R4第6問", "R4第5問"]],
+["keizai", "消費関数", "しょうひかんすう", "所得と消費の関係を表す式。ケインズ型では、消費＝基礎消費＋限界消費性向×所得。", "ケインズ型では、所得が増えるほど平均消費性向は下がる。限界消費性向は一定。", ["R8第6問", "R6第5問", "R4第4問"]],
+["keizai", "乗数効果", "じょうすうこうか", "投資や政府支出が増えると、国民所得がその何倍にも増える効果。", "政府支出乗数は1÷（1−限界消費性向）。租税乗数はマイナスで、絶対値は政府支出乗数より小さい。計算と図の線分の比で問われる。", ["R7第7問", "R6第7問", "R5第7問", "R4第6問", "R4第5問"]],
+["keizai", "45度線分析", "よんじゅうごどせんぶんせき", "縦軸に総需要、横軸に国民所得をとり、総需要の線と45度線の交点で均衡国民所得が決まるとする分析。", "完全雇用の国民所得のところで総需要が足りない分がデフレ・ギャップ。GDPの差そのものではない点がひっかけ。", ["R7第7問", "R5第7問", "R4第6問"]],
+["keizai", "平均費用と限界費用", "へいきんひようと げんかいひよう", "平均費用は総費用÷生産量、平均可変費用は可変費用÷生産量、限界費用は生産を1単位増やしたときの費用の増加分。", "限界費用曲線は、平均費用曲線と平均可変費用曲線の最低点を通る。固定費用は平均費用には入るが、限界費用には影響しない。", ["R8第17問", "R7第15問", "R6第16問", "R5第14問", "R4第15問"]],
+["keizai", "操業停止点", "そうぎょうていしてん", "価格が平均可変費用の最小値を下回り、生産をやめたほうが損失が小さくなる点。", "損益分岐点は平均費用の最低点、操業停止点は平均可変費用の最低点。その間の価格なら、赤字でも固定費の一部を回収できるので生産を続ける。", ["R8第17問", "R6第16問"]],
+["keizai", "利潤最大化条件", "りじゅんさいだいかじょうけん", "限界収入と限界費用が等しくなる生産量で、利潤が最大になる。完全競争では価格＝限界費用。", "独占企業は限界収入＝限界費用で生産量を決め、需要曲線上で価格をつける。総収入と総費用のグラフでは、両方の傾きが等しい点。", ["R8第20問", "R7第16問", "R7第15問", "R6第17問", "R4第15問"]],
+["keizai", "IS曲線", "アイエスきょくせん", "財市場が均衡する、利子率と国民所得の組み合わせを表す曲線。右下がり。", "政府支出の増加や減税で右にシフトする。投資の利子弾力性が大きいほど傾きは緩やか、小さいほど急になる。", ["R7第10問", "R5第8問"]],
+["keizai", "LM曲線", "エルエムきょくせん", "貨幣市場が均衡する、利子率と国民所得の組み合わせを表す曲線。右上がり。", "貨幣供給を増やすと右にシフトする。貨幣需要の利子弾力性が大きいほど緩やかで、流動性のわなでは水平になる。", ["R7第10問", "R5第8問"]],
+["keizai", "IS-LM分析", "アイエス エルエムぶんせき", "IS曲線とLM曲線の交点で、財市場と貨幣市場が同時に均衡する利子率と国民所得が決まるとする分析。", "財政政策はIS曲線を、金融政策はLM曲線を動かす。LM曲線が垂直なら財政政策は効かず、IS曲線が垂直なら金融政策は効かない。曲線の傾きと政策の効果の対応が問われる。", ["R8第9問", "R8第7問", "R7第10問", "R6第11問", "R6第10問", "R5第10問", "R5第8問"]],
+["keizai", "クラウディング・アウト", "", "政府支出の増加で利子率が上がり、民間の投資が減ってしまう現象。", "LM曲線が急なほど大きくなる。流動性のわなの状態では利子率が上がらないので起きない。", ["R8第7問", "R6第11問", "R6第10問"]],
+["keizai", "マンデル=フレミング・モデル", "マンデル フレミング モデル", "資本移動が完全に自由な小国で、為替制度によって財政政策と金融政策の効果がどう変わるかを示すモデル。", "変動相場制では金融政策が有効で財政政策は効かない。固定相場制ではその逆で、財政政策が有効で金融政策は効かない。", ["R8第9問", "R6第10問", "R5第10問"]],
+["keizai", "GDPに含まれるもの", "ジーディーピーに ふくまれるもの", "GDPは、一定期間に国内で新たに生み出された付加価値の合計。", "持ち家の帰属家賃や農家の自家消費は含む。家事労働、中古品の売買、株や土地の値上がり益、年金などの移転支出は含まない。毎年1問出る。", ["R8第4問", "R7第4問", "R6第4問", "R5第4問", "R4第3問"]],
+["keizai", "物価指数（ラスパイレスとパーシェ）", "ぶっかしすう、ラスパイレスとパーシェ", "ラスパイレス指数は基準年の数量で、パーシェ指数は比較する年の数量で重みをつけた物価指数。", "消費者物価指数はラスパイレス型、GDPデフレーター（名目GDP÷実質GDP）はパーシェ型。数値例の計算が中心。", ["R8第5問", "R8第3問", "R7第5問", "R5第5問"]],
+["keizai", "需要の価格弾力性", "じゅようのかかくだんりょくせい", "価格が1%変化したときに、需要量が何%変化するかを示す値。", "弾力性が1より大きい財は、値下げすると支出額（売上）が増える。直線の需要曲線では、点によって弾力性の値が変わる。", ["R8第13問", "R7第13問", "R6第13問", "R5第12問", "R4第14問"]],
+["keizai", "経常収支", "けいじょうしゅうし", "貿易・サービス収支、第一次所得収支、第二次所得収支を合わせたもの。", "近年の日本は、海外からの利子や配当にあたる第一次所得収支の黒字が大きい。冒頭の統計グラフの問題でも、この特徴が手がかりになる。", ["R8第2問", "R7第11問", "R6第9問", "R5第2問"]],
+["keizai", "上級財と下級財", "じょうきゅうざいと かきゅうざい", "所得が増えると需要が増えるのが上級財（正常財）、所得が増えると需要が減るのが下級財（劣等財）。", "下級財のうち、価格が上がると需要が増えるものがギッフェン財。エンゲル曲線や予算制約線の移動から判断させる。", ["R7第14問", "R7第12問", "R6第14問", "R5第16問"]],
+["keizai", "予算制約線", "よさんせいやくせん", "所得をすべて使ったときに買える、2つの財の組み合わせを表す直線。傾きは2つの財の価格比。", "所得が増えると外側に平行移動する。一方の財の価格が下がると、その財の軸側の端だけが外に動く。", ["R8第22問", "R8第15問", "R7第14問", "R6第14問"]],
+["keizai", "所得効果と代替効果", "しょとくこうかと だいたいこうか", "価格の変化による需要量の変化を、相対価格が変わることによる代替効果と、実質所得が変わることによる所得効果に分けたもの。", "代替効果は必ず価格と逆向きに働く。下級財では所得効果が逆向きに働く。無差別曲線の図で分解させる。", ["R8第15問", "R7第14問", "R6第14問"]],
+["keizai", "技術的限界代替率", "ぎじゅつてき げんかいだいたいりつ", "生産量を同じに保ったまま、労働を1単位増やすときに減らせる資本の量。等産出量曲線の接線の傾き。", "費用が最小になる点では、技術的限界代替率と要素価格の比（等費用線の傾き）が等しくなる。", ["R6第15問", "R5第15問", "R4第16問"]],
+["keizai", "為替レートの決定", "かわせレートのけってい", "為替レートは、2国の金利差、将来の為替の予想、物価水準の違いなどで決まるという考え方。", "他の条件が同じなら、日本の金利が下がると円安に働く。購買力平価説では、物価が上がった国の通貨が安くなる。", ["R6第9問", "R5第9問", "R4第9問"]],
+["keizai", "ナッシュ均衡", "ナッシュきんこう", "相手の戦略を前提にしたとき、どのプレイヤーも自分の戦略を変える動機がない戦略の組み合わせ。", "囚人のジレンマでは、ナッシュ均衡がパレート効率的な結果にならない。均衡は1つとは限らない。", ["R8第25問", "R5第22問", "R4第20問"]],
+["keizai", "逆選択とモラルハザード", "ぎゃくせんたくと モラルハザード", "取引する人の間で持っている情報に差があるために起きる問題。契約前の隠れた情報で起きるのが逆選択、契約後の隠れた行動で起きるのがモラルハザード。", "質の悪い中古車ばかりが残るのが逆選択、保険に入ったあと注意を怠るのがモラルハザード。対策との組み合わせが問われる。", ["R8第21問", "R5第18問", "R4第21問"]],
+["keizai", "パレート効率", "パレートこうりつ", "誰かの満足度を下げずには、ほかの誰の満足度も上げられない資源配分の状態。", "完全競争市場の均衡はパレート効率的になる。囚人のジレンマの均衡はパレート効率的ではない。", ["R8第25問", "R8第19問", "R5第15問"]],
+["keizai", "外部不経済", "がいぶふけいざい", "ある経済主体の活動が、市場での取引を通さずに他者に不利益を与えること。公害が典型例。", "私的な費用が社会全体の費用より小さいため、過剰に生産される。課税（ピグー税）で是正できる。", ["R7第17問", "R6第18問", "R5第17問"]],
+["keizai", "関税と貿易の余剰", "かんぜいと ぼうえきの よじょう", "自由貿易や関税によって、消費者余剰、生産者余剰、関税収入がどう変わるかを面積で見る分析。", "輸入国では、自由貿易で消費者が得をして国内の生産者が損をする。関税をかけると死荷重が生まれる。輸出国では得をする側が逆になる。", ["R7第18問", "R5第21問"]],
+["keizai", "比較優位", "ひかくゆうい", "他国と比べて、機会費用が相対的に小さい財のこと。各国がその財の生産に特化して貿易すると、両国とも利益を得られる（リカード）。", "すべての財で生産性が劣る国でも、比較優位を持つ財は必ずある。絶対優位と混同させる選択肢に注意。", ["R6第22問", "R4第18問"]],
+["keizai", "自然独占", "しぜんどくせん", "規模の経済が大きく、1社で生産したほうが費用が安くなる産業。費用逓減産業ともいう。", "価格を限界費用に合わせると、平均費用を下回って赤字になる。そのため補助金や二部料金制などが必要になる。", ["R8第19問", "R5第19問"]],
+["keizai", "フィリップス曲線", "フィリップスきょくせん", "失業率と、賃金や物価の上昇率との間にある右下がりの関係を示す曲線。", "自然失業率仮説では、長期のフィリップス曲線は自然失業率の水準で垂直になる。長期的には、需要を増やす政策で失業率を下げられない。", ["R6第12問", "R4第10問"]],
+["keizai", "最低賃金の効果", "さいていちんぎんの こうか", "均衡より高い水準に最低賃金を決めると、働きたい人が雇われる人より多くなり、失業が生じる。", "雇用量が減るので、労働市場に死荷重が生まれる。図で余剰の変化を問う。", ["R8第24問", "R6第20問", "R5第20問"]],
+["keizai", "ジニ係数", "ジニけいすう", "所得の分配の不平等さを0から1で示す指標。ローレンツ曲線と均等分配線との間の面積から求める。", "0に近いほど平等、1に近いほど不平等。税や社会保障による再分配の前と後で、どれだけ下がったかが問われる。", ["R7第20問", "R6第21問", "R4第1問"]],
+["zaimu", "ポートフォリオのリスク", "ポートフォリオのリスク", "複数の資産を組み合わせて、同じ期待収益率でもリスク（標準偏差）を小さくする考え方。", "相関係数が1より小さければ、分散投資でリスクが下がる。組み合わせた標準偏差は、各資産の標準偏差の加重平均にはならない（相関係数が1のときだけ一致）。", ["R8第19問", "R7第20問", "R6第19問", "R5第18問", "R4第16問", "R4第15問"]],
+["zaimu", "効率的フロンティア", "こうりつてき フロンティア", "同じリスクなら期待収益率が最も高い資産の組み合わせを結んだ線。最小分散ポートフォリオより上側の部分。", "安全資産がないときは曲線。安全資産があると、資本市場線（安全資産と接点ポートフォリオを結ぶ直線）が新しい効率的フロンティアになる。", ["R8第19問", "R7第20問", "R6第19問", "R4第16問"]],
+["zaimu", "分離定理", "ぶんりていり", "安全資産があると、どの投資家も同じ危険資産の組み合わせ（接点ポートフォリオ）を選び、リスクの好みは安全資産との配分だけで調整するという定理。", "最適な危険資産の組み合わせは、投資家のリスク回避度に左右されない。この点を逆に書いた選択肢がひっかけ。", ["R8第19問", "R7第20問", "R4第16問"]],
+["zaimu", "正味現在価値（NPV）", "しょうみげんざいかち、エヌ・ピー・ブイ", "投資から生まれる将来のキャッシュフローを現在価値に割り引いた合計から、初期投資額を引いたもの。", "NPVがプラスなら投資する。税引後のキャッシュフロー（減価償却費の節税効果を含む）を現価係数で割り引く計算が毎年のように出る。", ["R8第18問", "R7第18問", "R7第17問", "R7第14問", "R6第22問", "R6第17問", "R4第21問", "R4第14問"]],
+["zaimu", "内部収益率（IRR）", "ないぶしゅうえきりつ、アイ・アール・アール", "NPVがちょうどゼロになる割引率。", "IRRが資本コストを上回れば投資する。規模の違う案を比べると、NPVと結論が食い違うことがある。解が複数出ることもある。", ["R7第19問", "R6第17問", "R5第17問", "R4第21問"]],
+["zaimu", "損益分岐点売上高", "そんえきぶんきてん うりあげだか", "利益がちょうどゼロになる売上高。固定費÷限界利益率で求める。", "限界利益率は1−変動費率。目標利益を出すための売上高は、（固定費＋目標利益）÷限界利益率。", ["R7第13問", "R6第12問", "R4第12問"]],
+["zaimu", "CAPM", "キャップエム", "株主資本コスト（株式の期待収益率）を、リスクフリーレート＋β×（市場の期待収益率−リスクフリーレート）で求めるモデル。", "かっこの中が市場のリスクプレミアム。βは市場全体の動きに対する株価の感応度で、β＝1なら市場と同じ動きをする。", ["R7第16問", "R7第15問", "R6第19問", "R6第14問", "R4第22問"]],
+["zaimu", "WACC", "ワック", "加重平均資本コスト。負債のコストと株主資本のコストを、それぞれの構成比で加重平均したもの。", "負債のコストには節税効果があるので（1−税率）を掛ける。構成比は時価で計算するのが原則。", ["R7第16問", "R6第14問"]],
+["zaimu", "MM理論", "エムエムりろん", "税金や取引コストのない完全な市場では、企業価値は資本構成（負債と株主資本の割合）に関係なく決まるという理論。", "法人税があると、負債の利息による節税効果の分だけ、借入をしている企業の価値が高くなる。", ["R8第15問", "R5第15問"]],
+["zaimu", "ROE", "アール・オー・イー", "自己資本利益率。当期純利益÷自己資本で求め、株主の出資でどれだけ利益を上げたかを示す。", "売上高当期純利益率×総資本回転率×財務レバレッジに分解できる。総資本利益率が借入金利を上回っていれば、借入を増やすとROEは上がる。", ["R8第20問", "R5第15問", "R5第14問"]],
+["zaimu", "配当性向", "はいとうせいこう", "当期純利益のうち、配当に回した割合。配当総額÷当期純利益。", "1株あたりで見ると、1株配当÷1株利益。配当性向×ROEで純資産配当率が求まる。分母が利益か自己資本かの取り違えに注意。", ["R8第11問", "R6第15問", "R5第14問", "R4第23問"]],
+["zaimu", "サステナブル成長率", "サステナブルせいちょうりつ", "外部から資金を調達せず、利益の内部留保だけで実現できる成長率。ROE×内部留保率（1−配当性向）。", "配当をまったく出さなければ、サステナブル成長率はROEと等しくなる。", ["R6第21問", "R5第21問", "R4第17問"]],
+["zaimu", "配当割引モデル", "はいとうわりびきモデル", "株価は、将来の配当の現在価値の合計だという考え方。配当が一定の率で成長する場合、株価＝来期の配当÷（株主資本コスト−成長率）。", "配当が成長しないなら、株価＝配当÷株主資本コスト。分母で成長率を引くことと、使うのが来期の配当であることがひっかけになりやすい。", ["R7第16問", "R6第21問", "R5第21問"]],
+["zaimu", "フリーキャッシュフロー", "", "企業が事業から生み出し、債権者と株主に自由に分配できる現金。営業利益×（1−税率）＋減価償却費−設備投資−運転資本の増加額で求める。", "企業価値は、将来のフリーキャッシュフローをWACCで割り引いて求める（DCF法）。足すか引くかの符号の向きがひっかけ。", ["R7第21問", "R6第22問", "R5第20問"]],
+["zaimu", "企業価値評価の方法", "きぎょうかちひょうかの ほうほう", "企業の価値を評価する3つのアプローチ。将来の収益から求めるインカム・アプローチ、類似会社の倍率から求めるマーケット・アプローチ、純資産から求めるコスト・アプローチ。", "DCF法はインカム、マルチプル法（倍率法）はマーケット、純資産法はコスト・アプローチ。EV/EBITDA倍率は、株価収益率より資本構成の違いの影響を受けにくい。", ["R8第21問", "R7第22問", "R6第23問", "R4第19問"]],
+["zaimu", "残余利益モデル", "ざんよりえきモデル", "株主価値を、現在の自己資本の簿価に、将来の残余利益（当期純利益−株主資本コスト×期首自己資本）の現在価値を足して求めるモデル。", "純資産の増減が利益と配当だけで説明できること（クリーン・サープラス関係）が前提。", ["R8第22問", "R4第18問"]],
+["zaimu", "機会原価と埋没原価", "きかいげんかと まいぼつげんか", "機会原価は、ある案を選んだことであきらめた他の案から得られたはずの利益。埋没原価は、どの案を選んでも変わらない、すでに発生した原価。", "意思決定では埋没原価を考えに入れず、機会原価は含めて比べる。遊休設備を貸せば得られた収入などが機会原価の例。", ["R8第17問", "R6第18問", "R5第16問"]],
+["zaimu", "減価償却", "げんかしょうきゃく", "建物や機械などの取得原価を、使う期間（耐用年数）にわたって費用として配分する手続き。", "定額法と定率法の計算が中心。200%定率法では、償却額が償却保証額を下回った年から改定償却率に切り替える。現金の支出がないので、キャッシュフローでは足し戻す。", ["R8第5問", "R7第5問", "R5第3問", "R4第11問"]],
+["zaimu", "のれん", "", "企業を買収したとき、支払った対価が、受け入れた純資産の時価を上回る部分。", "日本の会計基準では、20年以内の効果が及ぶ期間で規則的に償却する。期の途中で取得したら月割り。下回るときは負ののれんとして、その期の利益にする。", ["R8第9問", "R7第10問", "R5第4問", "R4第5問"]],
+["zaimu", "非支配株主持分", "ひしはいかぶぬし もちぶん", "子会社の資本のうち、親会社以外の株主に帰属する部分。連結貸借対照表では純資産の部に表示する。", "持分が100%未満の子会社を連結するときに出る。負債の部に入れる選択肢はひっかけ。のれんの金額とあわせて計算させる。", ["R8第9問", "R7第10問", "R5第4問"]],
+["zaimu", "営業キャッシュフロー（間接法）", "えいぎょうキャッシュフロー、かんせつほう", "税引前当期純利益をスタートに、減価償却費など現金の出ていかない費用や、運転資本の増減を調整して求める方法。", "売上債権や棚卸資産が増えたらマイナス、仕入債務が増えたらプラスに調整する。現金同等物は、取得日から3か月以内に満期が来る定期預金などの短期投資。", ["R8第10問", "R6第7問", "R5第9問"]],
+["zaimu", "流動と固定の区分", "りゅうどうと こていの くぶん", "営業の循環の中にある資産・負債は流動。それ以外は、決算日の翌日から1年以内に回収や支払の期限が来るものを流動、それより先のものを固定とする（1年基準）。", "長期借入金のうち1年以内に返す分は、流動負債に振り替える。貸倒引当金などの表示方法も問われる。", ["R8第8問", "R8第3問", "R6第6問", "R5第8問"]],
+["zaimu", "損益計算書の表示区分", "そんえきけいさんしょの ひょうじくぶん", "売上総利益、営業利益、経常利益、税引前当期純利益、当期純利益の段階に分けて表示する。", "支払利息や受取配当金は営業外損益、固定資産の売却損益や災害による損失は特別損益。どの区分に入るかがよく問われる。", ["R8第8問", "R7第8問"]],
+["zaimu", "流動比率", "りゅうどうひりつ", "流動資産÷流動負債で求める、短期の支払能力を示す指標。", "借入や設備の購入、返済などの取引が、比率を上げるか下げるかを問う形で出る。", ["R8第11問", "R6第11問", "R5第11問"]],
+["zaimu", "自己資本比率", "じこしほんひりつ", "自己資本÷総資産で求める、財務の安全性を示す指標。", "借入金で資産を買うと、総資産が増えるので自己資本比率は下がる。自己資本が動かない取引でも比率が変わる点に注意。", ["R8第11問", "R6第11問", "R5第11問"]],
+["zaimu", "固定比率と固定長期適合率", "こていひりつと こていちょうきてきごうりつ", "固定比率は固定資産÷自己資本、固定長期適合率は固定資産÷（自己資本＋固定負債）。", "どちらも低いほど安全で、100%以下が目安。設備を長期借入で買ったとき、2つの比率がどう動くかの違いが問われる。", ["R8第11問", "R6第11問", "R5第11問"]],
+["zaimu", "法人税の申告調整", "ほうじんぜいの しんこくちょうせい", "会計上の当期純利益に、税務上の益金や損金との違いを足し引きして、課税所得を求める手続き。", "損金にならない費用（交際費の一部など）は加算、益金にならない収益（受取配当金の一部など）は減算する。足し引きの向きがひっかけ。", ["R8第1問", "R7第3問", "R6第9問", "R5第6問"]],
+["zaimu", "税効果会計", "ぜいこうかかいけい", "会計上の利益と税務上の所得のずれ（一時差異）を調整し、法人税等を適切な期間に配分する会計処理。", "将来の税金を減らす効果があるものは繰延税金資産、増やすものは繰延税金負債。一時差異×実効税率で金額を出す。", ["R7第9問", "R4第7問"]],
+["zaimu", "貸倒引当金", "かしだおれひきあてきん", "売掛金などの債権が将来回収できなくなる見込み額を、あらかじめ費用として計上するための引当金。", "差額補充法では、必要な残高と今ある残高の差額だけを繰り入れる。営業上の債権の分は販売費及び一般管理費、貸付金などの分は営業外費用。", ["R8第4問", "R7第1問", "R6第2問", "R6第1問"]],
+["zaimu", "収益認識基準", "しゅうえきにんしききじゅん", "顧客との契約から生じる収益を、契約の識別、履行義務の識別、取引価格の算定、取引価格の配分、履行義務を果たした時点での認識の5つのステップで計上する会計基準。", "対価を受け取る権利が無条件なら債権（売掛金）、まだ条件付きなら契約資産として計上する。", ["R6第1問", "R5第2問", "R4第3問"]],
+["zaimu", "有価証券の評価", "ゆうかしょうけんの ひょうか", "有価証券は保有目的で分けて評価する。売買目的は時価、満期保有目的の債券は償却原価、子会社・関連会社の株式は取得原価、その他有価証券は時価。", "売買目的の評価差額は損益に、その他有価証券の評価差額は原則として純資産に計上する。どれに時価を使うかの取り違えが出る。", ["R8第6問", "R7第7問", "R6第3問"]],
+["zaimu", "中小企業の会計に関する指針", "ちゅうしょうきぎょうの かいけいに かんする ししん", "中小企業が計算書類を作るときに拠ることが望ましい会計処理を示した指針。日本税理士会連合会など4団体が作成している。", "会計基準の考え方を基本にしつつ、一定の場合は法人税法に従った処理を認めるなど、中小企業向けの扱いがある。会計基準との違いが問われる。", ["R8第6問", "R8第4問", "R7第4問", "R6第8問"]],
+["zaimu", "自己株式", "じこかぶしき", "会社が保有している自社の株式。貸借対照表では、純資産の部で株主資本から差し引いて表示する。", "資産として計上する選択肢はひっかけ。処分したときの差額はその他資本剰余金で処理する。", ["R6第4問", "R4第10問"]],
+["zaimu", "原価差異", "げんかさい", "標準原価計算で、標準原価と実際原価の差。直接材料費は価格差異と数量差異に、直接労務費は賃率差異と時間差異に分ける。", "実際の原価が標準より大きければ不利差異。分けるときに、どの価格や数量を掛けるかの取り違えがひっかけ。", ["R8第12問", "R7第11問"]],
+["zaimu", "総合原価計算", "そうごうげんかけいさん", "同じ製品を続けて大量に生産する場合に、一定期間の製造原価を生産量で割って、製品1単位の原価を求める方法。", "月末仕掛品の評価（平均法・先入先出法）と、仕損や減損の費用を完成品と仕掛品のどちらに負担させるかの計算が出る。", ["R7第12問", "R5第10問"]],
+["zaimu", "資金繰り表", "しきんぐりひょう", "月ごとの現金の収入と支出、借入と返済を予定して、資金が足りなくならないかを確かめる表。", "売上の回収条件と仕入の支払条件から空欄を埋め、最低限の残高を保つための借入額を求める計算が出る。", ["R8第14問", "R4第13問"]],
+["zaimu", "先物取引と先渡取引", "さきものとりひきと さきわたしとりひき", "将来の決められた日に、決められた価格で売買することを今約束する取引。取引所で条件をそろえて行うのが先物、当事者同士で条件を決めるのが先渡。", "先物は証拠金を預け、毎日の値洗いで損益を清算する。条件が標準化されている点が先渡との違い。", ["R7第23問", "R4第20問"]],
+["kigyo", "ファイブフォース分析", "", "業界の収益性を、既存企業同士の競争、新規参入の脅威、代替品の脅威、買い手の交渉力、売り手の交渉力の5つの要因で分析する手法（ポーター）。", "参入障壁が高いほど、業界の収益性は高くなる。代替品のコストパフォーマンスが上がるほど、代替品の脅威は大きい。影響の向きを逆に書いた選択肢がひっかけ。", ["R7第32問", "R7第7問", "R6第7問", "R5第3問", "R4第3問"]],
+["kigyo", "VRIO分析", "ブリオぶんせき", "経営資源を、経済価値（V）、希少性（R）、模倣困難性（I）、組織（O）の4つの問いで評価する手法（バーニー）。", "4つすべてを満たすと持続的な競争優位になる。1つ満たせば持続的な優位になる、といった記述はひっかけ。", ["R8第1問", "R7第3問", "R5第2問", "R4第3問"]],
+["kigyo", "PPM", "ピー・ピー・エム", "プロダクト・ポートフォリオ・マネジメント。市場成長率と相対的市場シェアの2つの軸で事業を分類し、資金の配分を考える手法。", "花形は高成長で高シェア、金のなる木は低成長で高シェア、問題児は高成長で低シェア、負け犬は低成長で低シェア。金のなる木の資金を問題児などに回す。", ["R8第4問", "R6第4問", "R5第1問", "R4第2問"]],
+["kigyo", "SWOT分析", "スウォットぶんせき", "自社の強み（S）と弱み（W）、外部環境の機会（O）と脅威（T）を整理する分析手法。", "強みと弱みは内部、機会と脅威は外部の要因。組み合わせて戦略を考えるのがクロスSWOT。外部分析にSやWを入れる選択肢はひっかけ。", ["R8第2問", "R7第32問"]],
+["kigyo", "3C分析とPEST分析", "スリーシーぶんせきと ペストぶんせき", "3C分析は顧客、競合、自社の3つの視点で、PEST分析は政治、経済、社会、技術の4つの視点でマクロ環境を分析する手法。", "SWOT分析やファイブフォース分析と組み合わせて、事例にどの分析が合うかを問う形で出る。", ["R7第32問", "R4第3問"]],
+["kigyo", "多角化とシナジー", "たかくかと シナジー", "多角化で複数の事業が経営資源を共有し、別々に行うより大きな効果が生まれること。", "ルメルトは、関連のある分野への多角化のほうが、関連のない多角化より業績がよい傾向を示した。相乗効果と相補効果の区別も問われる。", ["R8第3問", "R6第3問", "R5第1問", "R4第1問"]],
+["kigyo", "取引コスト理論", "とりひきコストりろん", "取引を市場で行うか組織の中で行うかは、取引にかかるコストの大きさで決まるとする理論（ウィリアムソン）。", "取引先に特有の資産（資産特殊性）が大きいほど、また不確実性が高いほど、市場取引より自社に取り込む（垂直統合）ほうが有利になる。", ["R8第19問", "R7第5問", "R6第6問", "R4第6問"]],
+["kigyo", "経験曲線効果", "けいけんきょくせんこうか", "累積生産量が2倍になるごとに、製品1単位あたりのコストが一定の割合（20〜30%程度）で下がる効果。", "規模の経済は一時点の生産規模の話、経験曲線は累積生産量の話。早く累積生産量を積むための低価格戦略と組み合わせて問われる。", ["R8第6問", "R5第4問"]],
+["kigyo", "A-Uモデル", "エー・ユー モデル", "産業の発展の初期は製品イノベーションが多く、ドミナント・デザイン（業界標準の設計）が決まると工程イノベーションが中心になるとするモデル（アバナシーとアッターバック）。", "ドミナント・デザインは、技術的に最も優れたものとは限らない。どの段階でどちらのイノベーションが増えるかを逆にした選択肢がひっかけ。", ["R8第9問", "R6第9問"]],
+["kigyo", "イノベーションのジレンマ", "", "優良企業が既存の顧客の要望に応えて改良を続けるうちに、初めは性能が低い破壊的イノベーションに対応できず、地位を失う現象（クリステンセン）。", "破壊的な技術は、初期には性能も市場規模も利益率も低く見えるため、優良企業ほど投資しにくい。", ["R8第10問", "R4第9問"]],
+["kigyo", "エフェクチュエーション", "", "熟達した起業家に共通する、予測よりも手持ちの手段から行動を始める意思決定の考え方（サラスバシー）。", "手中の鳥、許容可能な損失、クレイジーキルト、レモネード、飛行機のパイロットの5つの原則がある。予測や目標を先に立てる行動を混ぜた選択肢がひっかけ。", ["R6第13問", "R5第8問", "R4第8問"]],
+["kigyo", "リーン・スタートアップ", "", "最小限の機能の製品（MVP）を早く作って顧客の反応から学び、改良や方向転換（ピボット）を繰り返す起業の方法。", "完成度を上げてから市場に出す進め方とは逆の考え方。", ["R7第11問", "R5第8問"]],
+["kigyo", "ブルー・オーシャン戦略", "ブルー オーシャンせんりゃく", "競争の激しい既存市場を避け、取り除く、減らす、増やす、付け加えるの4つの行動で、差別化と低コストを同時に実現して新しい市場をつくる戦略。", "差別化だけ、ニッチへの集中だけ、とする選択肢はひっかけ。", ["R8第8問", "R5第8問"]],
+["kigyo", "競争地位別戦略", "きょうそうちいべつせんりゃく", "市場での地位によって企業をリーダー、チャレンジャー、フォロワー、ニッチャーに分け、それぞれに合った戦略をとるという考え方（コトラー）。", "リーダーは市場全体を広げ、同質化で対抗する。チャレンジャーは差別化、フォロワーは模倣、ニッチャーは特定の分野に集中する。", ["R5第5問", "R4第4問"]],
+["kigyo", "スイッチングコスト", "", "顧客が今使っている商品やサービスから、他社のものに乗り換えるときにかかる費用や手間。", "スイッチングコストが高いと、先に顧客をつかんだ企業の優位（先行者優位）が続きやすい。企業は自社の顧客については高く保とうとする。", ["R8第28問", "R6第36問", "R5第6問"]],
+["kigyo", "シャインの組織文化論", "シャインの そしきぶんかろん", "組織文化を、目に見える人工物、標榜される価値観、無意識の基本的仮定の3つのレベルでとらえる理論（シャイン）。", "最も深いレベルは基本的仮定で、変えるのが最も難しい。調査や価値観の表明だけで文化が変わる、とする選択肢はひっかけ。", ["R8第15問", "R7第16問", "R6第15問"]],
+["kigyo", "事業部制組織", "じぎょうぶせいそしき", "製品や地域ごとに事業部を置き、各事業部が利益に責任を持って自律的に運営する組織。", "意思決定が速く、経営者の育成に向く。一方で、事業部の間で経営資源が重複し、短期の利益を追いやすい。機能ごとに部門を分ける職能別組織と対比される。", ["R5第14問", "R4第13問"]],
+["kigyo", "マトリックス組織", "マトリックスそしき", "機能別と事業別など、2つの軸の命令系統を組み合わせた組織。", "1人が2人の上司を持つため、命令一元化（ワンマン・ワンボス）の原則に反し、対立が起きやすい。", ["R5第14問", "R4第13問"]],
+["kigyo", "機械的組織と有機的組織", "きかいてきそしきと ゆうきてきそしき", "安定した環境では、階層や規則がはっきりした機械的組織が、変化の激しい環境では、柔軟な有機的組織が有効だとする研究（バーンズとストーカー）。", "どちらがよいかは環境によって決まる、という条件適合理論の考え方。", ["R7第15問", "R5第15問"]],
+["kigyo", "資源依存パースペクティブ", "しげんいぞん パースペクティブ", "組織は、生き残るのに必要な資源を外部の組織に頼っており、その依存を管理するために行動するという考え方（フェファーとサランシック）。", "依存を減らしたり管理したりする手段として、合併、合弁、役員の受け入れなどがある。", ["R7第21問", "R5第21問"]],
+["kigyo", "個体群生態学", "こたいぐんせいたいがく", "生物の自然淘汰のように、環境に合った組織が選ばれて生き残る（変異、選択、保持）という考え方で、組織の集団の変化を説明する理論。", "個々の組織は慣性が強く、環境に柔軟に合わせるのは難しいという前提に立つ。柔軟に適応する組織が生き残る、とする選択肢はひっかけ。", ["R8第21問", "R4第20問"]],
+["kigyo", "サイモンの意思決定論", "サイモンの いしけっていろん", "人間は情報や能力に限りがあるため、最善の案ではなく、満足できる案を選ぶ（制約された合理性、満足化）という考え方。", "意思決定の前提を、価値前提と事実前提に分けた。完全な合理性を前提にする選択肢はひっかけ。", ["R8第16問", "R6第16問"]],
+["kigyo", "知識創造理論", "ちしきそうぞうりろん", "個人の暗黙知と形式知を変換し合うことで、組織として知識を生み出すという理論（野中郁次郎）。", "共同化、表出化、連結化、内面化の4つの段階からなるSECIモデルで説明する。", ["R5第11問", "R4第10問"]],
+["kigyo", "弱い紐帯の強み", "よわいちゅうたいの つよみ", "家族や親友のような強い結びつきより、知人程度の弱い結びつきのほうが、新しい情報をもたらしやすいという考え方（グラノヴェッター）。", "弱い紐帯を強い紐帯に変えるべき、とする選択肢はひっかけ。", ["R7第22問", "R6第21問"]],
+["kigyo", "パス・ゴール理論", "パス ゴールりろん", "リーダーの役割は、部下が目標（ゴール）に至る道筋（パス）を示して支援することで、有効なリーダー行動は部下の特性と仕事の環境で変わるとする理論（ハウス）。", "仕事が定型的ではっきりしていれば、細かく指示するリーダー行動は逆効果になりやすい。あいまいな仕事では指示型が有効。", ["R8第18問", "R7第20問", "R5第18問"]],
+["kigyo", "フィードラーのコンティンジェンシー・モデル", "", "リーダーの型（LPC得点で測る人間関係志向かタスク志向か）と、状況の好ましさの組み合わせで、リーダーシップの有効性が決まるとする理論。", "状況が非常に有利か非常に不利なときはタスク志向型が、中程度のときは人間関係志向型が有効。", ["R8第18問", "R7第20問"]],
+["kigyo", "期待理論", "きたいりろん", "やる気の強さは、努力すれば成果が出るという期待と、成果から得られる報酬の魅力（誘意性）などの掛け算で決まるとする理論（ヴルーム）。", "掛け算なので、どれかがゼロならやる気もゼロになる。成果と報酬のつながりがはっきりしていると、動機づけは高まる。", ["R8第17問", "R4第16問"]],
+["kigyo", "職務特性モデル", "しょくむとくせいモデル", "仕事の5つの特性（技能多様性、タスク・アイデンティティ、タスク重要性、自律性、フィードバック）が、働く人の内発的な動機づけを高めるとするモデル（ハックマンとオルダム）。", "5つの特性の名前と中身の組み合わせを入れ替えた選択肢がひっかけ。", ["R5第16問", "R4第21問"]],
+["kigyo", "賃金支払の5原則", "ちんぎんしはらいの ごげんそく", "賃金は、通貨で、直接労働者に、全額を、毎月1回以上、一定の期日を定めて支払わなければならない（労働基準法）。", "法令や労使協定があれば、税金の源泉徴収や社内預金などを差し引ける（全額払の例外）。", ["R8第24問", "R5第24問"]],
+["kigyo", "休憩時間", "きゅうけいじかん", "労働時間が6時間を超える場合は少なくとも45分、8時間を超える場合は少なくとも1時間の休憩を、労働時間の途中に与えなければならない。", "休憩は一斉に与え、自由に使わせるのが原則（業種や労使協定による例外がある）。", ["R5第26問", "R4第23問"]],
+["kigyo", "就業規則", "しゅうぎょうきそく", "常時10人以上の労働者を使う使用者は、就業規則を作り、労働基準監督署に届け出なければならない。", "作成や変更のときは、労働者の過半数代表の意見を聴く必要があるが、同意までは要らない。", ["R6第27問", "R4第24問"]],
+["kigyo", "労働条件の明示", "ろうどうじょうけんの めいじ", "労働契約を結ぶとき、使用者は賃金や労働時間などの労働条件をはっきり示さなければならない。一定の事項は書面（本人が希望すれば電子メールなども可）で示す。", "2024年4月から、就業場所や業務の変更の範囲なども明示する事項に加わった。", ["R7第24問", "R4第23問"]],
+["kigyo", "STP", "エス・ティー・ピー", "市場を細分化し（セグメンテーション）、狙う市場を決め（ターゲティング）、競合との違いを打ち出す（ポジショニング）マーケティングの手順。", "年齢、性別、所得、職業は人口統計的変数、ライフスタイルや価値観は心理的変数。どの変数に入るかが問われる。", ["R8第39問", "R6第38問"]],
+["kigyo", "準拠集団", "じゅんきょしゅうだん", "人の態度や購買行動に影響を与える集団。所属している集団だけでなく、あこがれの集団も含む。", "影響の仕方は、情報的影響、功利的影響、価値表出的影響に分けられる。", ["R8第39問", "R5第35問", "R4第27問"]],
+["kigyo", "カスタマー・ジャーニー", "", "顧客が商品を知ってから、比較・検討、購入、利用、購入後の評価やクチコミに至るまでの体験の流れを、接点ごとに整理したもの。", "購入の瞬間だけを重視する、とする選択肢はひっかけ。購入後の体験やクチコミも接点に含む。", ["R8第32問", "R6第30問", "R5第32問"]],
+["kigyo", "サービス・プロフィット・チェーン", "", "従業員の満足が、サービスの質と顧客の満足を高め、顧客のロイヤルティと企業の利益につながるという連鎖。", "連鎖の起点は従業員の側。従業員を内部の顧客とみなして働きかけるのが、インターナル・マーケティング。", ["R8第40問", "R8第38問", "R7第39問"]],
+["kigyo", "SERVQUAL", "サーブクオル", "サービスの品質を、有形性、信頼性、反応性、確実性、共感性の5つの次元で、顧客の期待と実際の受け止めの差から測る尺度。", "5つの次元の名前と中身の組み合わせが問われる。", ["R8第38問", "R4第37問"]],
+["kigyo", "開放的・選択的・排他的流通", "かいほうてき せんたくてき はいたてき りゅうつう", "自社の商品を扱う販売店の数を、どこまで絞るかの流通チャネル政策。", "開放的流通は日用品などの最寄品、排他的流通は高級品などの専門品に向く。絞るほど販売店への統制は強まるが、商品が並ぶ場所は減る。", ["R8第41問", "R8第39問", "R4第30問"]],
+["kigyo", "プッシュ戦略とプル戦略", "プッシュせんりゃくと プルせんりゃく", "プッシュ戦略は、流通業者に販売を働きかけて商品を押し出す戦略。プル戦略は、広告などで消費者が自分から指名して買うように促す戦略。", "人的販売や販売店への支援はプッシュ、マス広告はプル。人的販売は相手に合わせて説得できるが、一度に対応できる人数が限られる。", ["R8第40問", "R7第33問", "R6第35問"]],
+["kigyo", "価格戦略（浸透価格とキャプティブ）", "かかくせんりゃく、しんとうかかくと キャプティブ", "浸透価格は最初から低い価格で一気にシェアを取る戦略。キャプティブ・プライシングは、本体を安くして消耗品などを高くする価格設定。", "高い価格から始めて少しずつ下げるのは上澄み吸収価格。経験曲線効果が大きい商品や、価格に敏感な市場では浸透価格が向く。", ["R6第37問", "R5第4問", "R4第29問"]],
+["kigyo", "ダイナミック・プライシング", "", "需要と供給の状況や時期に応じて、価格を変える価格設定の方法。", "ホテルや航空券などで以前から行われており、デジタル化で初めて生まれた手法ではない。", ["R7第30問", "R6第37問", "R5第32問"]],
+["kigyo", "ソサイエタル・マーケティング", "", "企業の利益、顧客の満足、社会全体の長期的な利益の3つを両立させようとするマーケティングの考え方。", "売上の一部を社会的な課題に寄付する販売促進は、コーズ・リレーテッド・マーケティングという。", ["R8第36問", "R6第29問", "R5第36問"]],
+["kigyo", "CSV", "シー・エス・ブイ", "共通価値の創造。社会的な課題の解決と企業の経済的な価値を、本業を通じて同時に生み出すという考え方（ポーターとクラマー）。", "本業と切り離した慈善活動や、従来のCSRとは区別する。", ["R8第36問", "R6第12問", "R5第36問"]],
+["kigyo", "パブリシティ", "", "企業の情報を報道機関に提供して、ニュースや記事として取り上げてもらうこと。費用はかからない。", "費用を払って記事の形で載せるペイド・パブリシティは、実質は広告。PR（パブリック・リレーションズ）は、顧客だけでなく株主、地域、従業員などとの関係づくり全体を指す。", ["R8第35問", "R6第34問"]],
+["kigyo", "ステルス・マーケティング", "", "広告であることを隠して宣伝すること。", "2023年10月から、景品表示法の不当表示として規制されるようになった。", ["R8第34問", "R5第32問"]],
+["kigyo", "一次データと二次データ", "いちじデータと にじデータ", "一次データは、その調査のために自分で新しく集めるデータ。二次データは、すでにある資料や統計。", "社内にすでにある販売データは二次データ。二次データは早く安く手に入るので、まず二次データから確かめる。", ["R8第37問", "R7第28問", "R6第39問"]],
+["kigyo", "カイ2乗検定", "カイにじょうけんてい", "2つのカテゴリー変数のクロス集計表から、変数の間に関連があるかを確かめる検定。", "データの尺度に合った分析方法を選ばせる形で出る。平均の差を比べるt検定や、連続量の関係を見る相関分析と使い分ける。", ["R8第37問", "R7第28問"]],
+["unei", "定期発注方式", "ていきはっちゅうほうしき", "決まった間隔で、その都度、需要の予測をもとに発注量を計算して発注する方式。", "発注量＝（発注間隔＋調達期間）中の需要量＋安全在庫−有効在庫量。有効在庫量は手持在庫に発注残を加えたもの。重要なA品目に向く。", ["R8第33問", "R8第20問", "R7第32問", "R6第33問", "R6第15問", "R5第31問", "R4第31問"]],
+["unei", "定量発注方式", "ていりょうはっちゅうほうしき", "在庫が発注点まで減ったら、決まった量を発注する方式。", "発注点＝調達期間中の平均需要量＋安全在庫。単価の安いC品目に向く。2つの容器を使い、1つが空になったら発注するダブルビン方式はその簡易版。", ["R8第33問", "R7第32問", "R6第33問", "R6第15問", "R5第31問", "R4第31問", "R4第10問"]],
+["unei", "安全在庫", "あんぜんざいこ", "需要のばらつきなどで欠品しないように、余分に持っておく在庫。", "安全在庫＝安全係数×需要の標準偏差×√（対象期間）。対象期間は、定量発注では調達期間、定期発注では発注間隔＋調達期間。", ["R8第20問", "R7第32問", "R6第33問", "R5第31問", "R4第10問"]],
+["unei", "経済的発注量", "けいざいてきはっちゅうりょう", "発注にかかる費用と在庫の保管費用の合計が最も小さくなる、1回あたりの発注量。", "√（2×年間需要量×1回の発注費用÷1個あたりの年間保管費用）で求める。年間の発注費用と保管費用が等しくなる点。", ["R5第11問", "R4第10問"]],
+["unei", "ABC分析", "エー・ビー・シーぶんせき", "品目を売上高や使用金額の大きい順に並べ、累積の比率でA・B・Cのグループに分けて、管理の重点を決める手法。", "パレート図を使う。少数で金額の大きいA品目は定期発注方式などで重点的に管理し、C品目は手間をかけずに管理する。", ["R6第15問", "R5第40問", "R4第36問"]],
+["unei", "アソシエーション分析", "アソシエーションぶんせき", "レシートなどの購買データから、一緒に買われやすい商品の組み合わせを見つける分析。", "支持度は両方を含むレシートの割合、信頼度はAを買った人のうちBも買った割合、リフト値は信頼度÷Bを買った割合。分母の取り違えがひっかけ。", ["R7第40問", "R5第38問", "R4第39問"]],
+["unei", "PERTとクリティカルパス", "パートと クリティカルパス", "作業の順番の関係をアロー・ダイアグラムに表し、最も時間のかかる経路（クリティカルパス）を見つけて日程を管理する手法。", "クリティカルパス上の作業が遅れると全体が遅れる。費用をかけて期間を縮める（クラッシング）ときは、クリティカルパス上で最も安い作業から縮める。", ["R8第3問", "R7第7問", "R6第2問", "R5第8問", "R4第7問"]],
+["unei", "MRPと部品表", "エムアールピーと ぶひんひょう", "MRP（資材所要量計画）は、基準生産計画、部品表、在庫の情報から、必要な部品や資材の量と時期を計算する仕組み。部品表（BOM）は製品に必要な部品の構成と数量の一覧。", "必要数は、親の数量×員数を段階ごとに掛け合わせて求め、在庫や発注残を引いて正味の所要量を出す。段階ごとの掛け忘れが落とし穴。", ["R8第2問", "R6第13問", "R6第5問", "R5第7問", "R4第6問"]],
+["unei", "サイクルタイム", "", "生産ラインから製品が1個完成して出てくる時間の間隔。計画稼働時間÷計画生産量で求める。", "各工程の作業時間は、サイクルタイム以下にしなければならない。分と秒の単位や、整数に切り捨てる指示の見落としに注意。", ["R8第15問", "R6第4問", "R5第6問", "R4第2問"]],
+["unei", "ライン編成効率", "ラインへんせいこうりつ", "作業時間の合計÷（工程数×サイクルタイム）で求める、ラインのムダの少なさを示す指標。", "100%から編成効率を引いたものがバランスロス率。作業の割り付け案を比べさせる。", ["R8第15問", "R6第4問", "R4第2問"]],
+["unei", "標準時間", "ひょうじゅんじかん", "決められた方法と条件で、標準的な速さの作業者が作業するのにかかる時間。正味時間に余裕時間を加えたもの。", "正味時間は観測時間×レイティング係数。余裕率は、外掛け法では余裕時間÷正味時間、内掛け法では余裕時間÷標準時間。分母の取り違えがひっかけ。", ["R8第8問", "R5第15問", "R4第16問"]],
+["unei", "ワークサンプリング", "", "作業者や機械の状態を、ランダムな時刻に瞬間的に観測し、その比率から稼働の状況を推定する方法。", "続けて観測するストップウオッチ法と違い、観測の手間が少ない。観測結果から余裕率などを計算させる。", ["R8第8問", "R4第16問"]],
+["unei", "工程能力指数", "こうていのうりょくしすう", "工程が規格をどれだけ満たせるかを示す指標。Cp＝（上限規格−下限規格）÷6σ。", "平均値が規格の中心からずれている場合は、ずれを考えたCpkを使う。1.33以上あれば十分とされる。", ["R7第8問", "R6第7問", "R5第21問"]],
+["unei", "QC七つ道具と新QC七つ道具", "キューシーななつどうぐと しんキューシーななつどうぐ", "QC七つ道具は数値データを分析する手法（パレート図、特性要因図、ヒストグラム、散布図、管理図、チェックシート、グラフ）。新QC七つ道具は言葉のデータを整理する手法（親和図、連関図、系統図など）。", "原因と結果が複雑にからむ問題を整理するのは連関図（新QC七つ道具）、結果と原因を魚の骨の形に整理するのは特性要因図（QC七つ道具）。", ["R7第5問", "R5第12問", "R4第11問"]],
+["unei", "歩留り", "ぶどまり", "投入した原材料の量に対する、得られた製品の量の割合。産出量÷投入量。", "不適合品率や作業能率など、似た指標の定義との取り違えを狙った問題が多い。", ["R8第1問", "R5第21問", "R5第1問", "R4第1問"]],
+["unei", "TPM", "ティー・ピー・エム", "全員参加の生産保全。設備の効率を最大にすることを目標に、トップから現場まで全員で保全に取り組む活動。", "柱の一つが、運転する作業者自身が日常の点検などを行う自主保全。保全には、予防保全、事後保全、改良保全、保全予防などの種類がある。", ["R8第13問", "R7第11問", "R5第19問", "R4第19問", "R4第17問"]],
+["unei", "MTBFとMTTR", "エム・ティー・ビー・エフと エム・ティー・ティー・アール", "MTBFは故障してから次に故障するまでの平均時間、MTTRは故障を直すのにかかる平均時間。", "可用率（稼働率）＝MTBF÷（MTBF＋MTTR）。MTBFは長いほど、MTTRは短いほどよい。向きを逆にした選択肢がひっかけ。", ["R8第13問", "R5第21問", "R4第19問"]],
+["unei", "設備総合効率", "せつびそうごうこうりつ", "時間稼働率×性能稼働率×良品率で求める、設備がどれだけ有効に使われているかを示す指標。", "停止時間、速度の低下、不良のどれを減らす施策が効率をどれだけ上げるかを比べさせる。", ["R6第8問", "R4第19問", "R4第18問"]],
+["unei", "ECRS", "イー・シー・アール・エス", "改善の4原則。排除（なくせないか）、結合（まとめられないか）、交換（順序を入れ替えられないか）、簡素化（単純にできないか）の順に考える。", "最初に、なくせないかを考える。動作の数を減らす、同時に行うなどの動作経済の原則と区別する。", ["R7第10問", "R5第18問", "R4第20問"]],
+["unei", "DI分析", "ディー・アイぶんせき", "運搬の距離（D）と運搬量や回数（I）をグラフに描いて、改善すべき運搬を見つける分析。", "距離が長く運搬量も多い運搬から優先して改善し、レイアウトを変えて近づけるなどの対策を考える。", ["R7第15問", "R6第12問", "R5第2問"]],
+["unei", "運搬活性示数", "うんぱんかっせいしすう", "置かれている物の運び出しやすさを、0から4の5段階で示す指標。", "床にばらばらに置かれた状態が0、箱などにまとまっていると1、パレットに載っていると2、車に載っていると3、コンベヤなどで動いている状態が4。", ["R7第8問", "R6第17問", "R5第14問"]],
+["unei", "コンカレント・エンジニアリング", "", "製品の設計、生産の準備、調達などを、順番ではなく並行して進め、開発期間を短くする手法。", "似た名前の別の手法にすり替えた選択肢がひっかけ。", ["R7第1問", "R5第4問", "R4第3問"]],
+["unei", "優劣分岐点", "ゆうれつぶんきてん", "固定費と変動費の違う2つの案（設備など）の総費用が、等しくなる生産量。", "それより多く作るなら変動費の小さい案、少なく作るなら固定費の小さい案が有利。生産能力の上限を超える場合の売り逃しにも注意。", ["R8第18問", "R6第9問"]],
+["unei", "指数平滑法", "しすうへいかつほう", "新しい予測値＝前回の予測値＋平滑化係数α×（前回の実績値−前回の予測値）で需要を予測する方法。", "αが大きいほど直近の実績を強く反映する。移動平均法は、平均する期間を長くするほど変化への反応が鈍くなる。", ["R8第17問", "R7第33問", "R6第34問", "R5第32問"]],
+["unei", "ユニットロード", "", "貨物をパレットやコンテナなどで一定の単位にまとめ、その単位のまま荷役、輸送、保管すること。", "発地から着地まで同じパレットで運ぶのが一貫パレチゼーション。荷役は効率化するが、パレットの分だけトラックの積載効率が下がることがある。", ["R8第35問", "R7第35問", "R6第36問", "R6第17問", "R4第33問"]],
+["unei", "ロケーション管理", "ロケーションかんり", "倉庫の保管場所に番地をつけて、商品の置き場所を管理すること。", "固定ロケーションは置き場所が決まっていて探しやすいが、保管効率が低い。フリーロケーションは空いた場所に置くので保管効率は高いが、場所の情報管理が欠かせない。", ["R8第37問", "R7第12問", "R6第38問", "R5第35問"]],
+["unei", "ピッキング方式", "ピッキングほうしき", "摘み取り方式は、注文ごとに棚を回って商品を集める方式。種まき方式は、複数の注文分をまとめて取り出してから、注文ごとに仕分ける方式。", "摘み取りを支援するのがDPS（デジタルピッキングシステム）、種まきを支援するのがDAS（デジタルアソートシステム）。", ["R8第37問", "R7第37問", "R6第38問", "R5第35問", "R4第36問"]],
+["unei", "ASN", "エー・エス・エヌ", "事前出荷明細。出荷する側が、納品する商品の明細を出荷前に入荷する側へ電子データで送るもの。", "入荷する側は、ASNと荷物のラベルを照合して、検品作業を省力化できる。", ["R7第37問", "R6第38問", "R5第35問", "R4第36問"]],
+["unei", "トラック予約受付システム", "トラックよやく うけつけシステム", "トラックの到着時刻を事前に予約してもらい、物流センターでの荷待ち時間を減らす仕組み。", "荷物を受け取る物流センターの側が導入して、到着の集中を防ぐ。", ["R8第37問", "R7第37問", "R6第38問"]],
+["unei", "DCとTC", "ディー・シーと ティー・シー", "DC（在庫型物流センター）は在庫を持って注文に応じて出荷する。TC（通過型物流センター）は在庫を持たず、入荷した商品をすぐ仕分けて出荷する。", "生鮮食品の加工などを行うのがプロセスセンター。店舗の売場の分類ごとに仕分けて納品するのがカテゴリー納品。", ["R8第36問", "R6第37問", "R4第34問"]],
+["unei", "標準貨物自動車運送約款", "ひょうじゅんかもつ じどうしゃうんそうやっかん", "トラック運送の契約条件のひな型として、国土交通省が定める約款。", "運送そのものの対価である運賃と、積込み、取卸し、待機時間などの料金を分けて受け取ることが明確にされた。運賃に含まれるとする選択肢がひっかけ。", ["R7第34問", "R6第35問", "R5第33問", "R4第32問"]],
+["unei", "積載率と実車率", "せきさいりつと じっしゃりつ", "積載率は、積んだ貨物の量÷最大積載量。実車率は、貨物を積んで走った距離÷総走行距離。", "帰り荷を確保すると実車率が上がる。複数の荷主の貨物を積み合わせると積載率が上がる。", ["R7第36問", "R5第34問", "R4第35問"]],
+["unei", "モーダルシフト", "", "トラックによる輸送を、環境への負荷が小さく大量に運べる鉄道や船舶の輸送に切り替えること。", "複数の輸送機関を組み合わせて一貫して運ぶのが複合一貫輸送。トラックがそのまま乗り降りできる船がRORO船。", ["R7第35問", "R7第34問", "R6第35問", "R5第33問", "R4第32問"]],
+["unei", "GTIN（JANコード）", "ジーティン、ジャンコード", "商品を識別するための国際的な共通の商品コード。日本で使うJANコード（13桁・8桁）や、段ボールなどの集合包装に使う14桁のコードがある。", "事業者コード（国コードを含む）、商品アイテムコード、チェックデジットで構成される。商品の中身が変わるときなど、新しいコードが必要な場合のルールが問われる。", ["R8第38問", "R7第38問", "R6第40問", "R6第39問", "R5第37問"]],
+["unei", "ソースマーキングとインストアマーキング", "", "メーカーが製造の段階で商品にバーコードをつけるのがソースマーキング、小売店が店内でつけるのがインストアマーキング。", "インストアマーキングには、価格を含むnon-PLU型と、価格を含まずレジで価格マスタを参照するPLU型がある。", ["R8第39問", "R4第37問"]],
+["unei", "関連購買", "かんれんこうばい", "ある商品を買うときに、それと関連する商品も一緒に買うこと。", "売場では、関連する商品を近くに並べることで促す。", ["R6第29問", "R5第29問", "R4第28問"]],
+["unei", "相乗積", "そうじょうせき", "部門ごとの粗利益率×その部門の売上構成比。", "すべての部門の相乗積を足すと、店全体の粗利益率になる。どの部門が利益に貢献しているかを見るのに使う。", ["R8第27問", "R5第28問"]],
+["unei", "大規模小売店舗立地法", "だいきぼ こうりてんぽ りっちほう", "店舗面積が1,000平方メートルを超える大型店を出すとき、交通、騒音、廃棄物など周辺の生活環境への配慮を求める法律。", "中心市街地活性化法、都市計画法と合わせて、まちづくり三法と呼ばれる。中小の小売業との調整を目的とする法律ではない。", ["R8第26問", "R7第25問", "R5第25問", "R4第23問"]],
+["unei", "都市計画法", "としけいかくほう", "都市計画区域を、市街化を進める市街化区域と、市街化を抑える市街化調整区域に分け、用途地域によって建てられる建物の種類を決める法律。", "床面積1万平方メートルを超える大規模な集客施設は、原則として商業地域、近隣商業地域、準工業地域でしか建てられない。", ["R8第26問", "R8第24問", "R6第23問", "R5第27問", "R4第24問"]],
+["unei", "ライリーの法則", "ライリーのほうそく", "2つの都市が、その間にある町から購買力を引きつける割合は、都市の人口に比例し、距離の2乗に反比例するという法則。", "消費者が店を選ぶ確率を売場面積と距離で考えるハフモデルと区別する。", ["R7第24問", "R4第25問"]],
+["unei", "個人情報保護法", "こじんじょうほうほごほう", "個人情報を扱う事業者の義務を定めた法律。", "仮名加工情報は、他の情報と照合しないと個人がわからないように加工した情報で、主に社内の分析に使う。匿名加工情報は、個人がわからず元にも戻せないように加工した情報で、決まった手続きで第三者に提供できる。", ["R8第42問", "R6第42問", "R4第41問"]],
+["unei", "カーボンフットプリント", "カーボン フットプリント", "商品の原材料の調達から、製造、輸送、使用、廃棄までのライフサイクル全体で出る温室効果ガスの量を、CO2に換算して示す仕組み。", "ライフサイクル全体の環境影響を評価するLCAとの違いや、算定の範囲が問われる。", ["R8第5問", "R7第17問", "R6第20問"]],
+["homu", "会社分割と事業譲渡", "かいしゃぶんかつと じぎょうじょうと", "会社分割は、事業の権利義務をまとめて別の会社に引き継がせる組織再編。事業譲渡は、事業を取引として売り買いする契約。", "会社分割では契約などが相手の個別の同意なしに移り、債権者保護の手続きがある。事業譲渡には債権者保護の手続きがなく、債務を移すには債権者の個別の同意が要る。この対比が毎年のように出る。", ["R7第6問", "R6第7問", "R5第6問", "R4第5問"]],
+["homu", "特別決議", "とくべつけつぎ", "議決権の過半数を持つ株主が出席し、出席した株主の議決権の3分の2以上の賛成で成立する株主総会の決議。", "定款の変更、合併、事業譲渡、株式の併合、監査役の解任などで必要。取締役の解任は原則として普通決議、監査役の解任は特別決議という違いがよく問われる。", ["R7第3問", "R6第8問", "R6第2問", "R5第2問", "R4第7問", "R4第1問"]],
+["homu", "反対株主の株式買取請求権", "はんたいかぶぬしの かぶしきかいとりせいきゅうけん", "合併や事業譲渡などの重要な決定に反対する株主が、会社に自分の株式を公正な価格で買い取るよう請求できる権利。", "株式の分割には認められない。事業譲渡と同時に会社の解散を決議する場合も認められない。", ["R7第6問", "R6第8問", "R6第7問", "R4第5問"]],
+["homu", "株式の併合と分割", "かぶしきの へいごうと ぶんかつ", "株式の併合は、複数の株式を1株にまとめること。株式の分割は、1株を複数の株式に分けること。", "併合は株主総会の特別決議が必要で、反対株主の買取請求権がある。分割は取締役会設置会社なら取締役会の決議で行え、買取請求権はない。", ["R6第8問", "R4第1問"]],
+["homu", "株式会社の設立", "かぶしきがいしゃの せつりつ", "発起人が定款を作り、出資を受けて設立の登記をすることで成立する。発起人だけで全部の株式を引き受けるのが発起設立、ほかの人からも募集するのが募集設立。", "発起人は法人でもよく、最低資本金の制度はない。目的、商号、本店の所在地、出資される財産の価額またはその最低額、発起人の氏名・名称と住所は、定款に必ず書く事項。", ["R6第6問", "R5第5問", "R4第6問"]],
+["homu", "公開会社", "こうかいがいしゃ", "発行する株式の全部または一部に、譲渡制限がついていない株式会社。", "上場しているかどうかとは関係ない。株主総会の招集期間の短縮や、取締役の任期の延長など、非公開会社だけに認められる扱いとの違いが問われる。", ["R7第1問", "R5第1問", "R4第6問"]],
+["homu", "取締役の任期と取締役会の招集", "とりしまりやくの にんきと とりしまりやくかいの しょうしゅう", "取締役の任期は原則2年。取締役会の招集通知は、原則として会日の1週間前までに出す（定款で短くできる）。", "非公開会社は、定款で取締役の任期を10年まで延ばせる。取締役と監査役の全員が同意すれば、招集の手続きを省ける。", ["R8第2問", "R7第2問", "R5第3問", "R4第2問"]],
+["homu", "監査役", "かんさやく", "取締役の職務の執行を監査する機関。任期は原則4年で、短くすることはできない。", "非公開会社は定款で10年まで延ばせる。会社や子会社の取締役・使用人との兼任はできない。監査役会は3人以上で、半数以上が社外監査役。", ["R8第1問", "R7第3問", "R6第2問", "R5第4問", "R4第2問"]],
+["homu", "会計監査人と社外取締役", "かいけいかんさにんと しゃがいとりしまりやく", "大会社、監査等委員会設置会社、指名委員会等設置会社は、会計監査人を置かなければならない。", "監査等委員会設置会社の監査等委員は3人以上で、その過半数は社外取締役でなければならない。どの機関設計で何が必須かの組み合わせが問われる。", ["R8第6問", "R8第1問", "R6第1問"]],
+["homu", "合同会社", "ごうどうがいしゃ", "社員全員が有限責任を負い、定款で内部のルールを自由に決められる持分会社。", "社員は1人でもよく、法人も社員になれる（その場合は職務を行う人を選ぶ）。出資は金銭などに限られ、労務や信用での出資はできない。", ["R8第2問", "R7第5問", "R4第4問"]],
+["homu", "英文契約の主な条項", "えいぶんけいやくの おもな じょうこう", "準拠法（Governing Law）、仲裁（Arbitration）、補償（Indemnification）、分離可能性（Severability）、完全合意（Entire Agreement）、不可抗力（Force Majeure）など。", "条項の英文を読み、趣旨や、どちらの当事者に有利か不利かを判断させる形で毎年出る。", ["R8第24問", "R7第8問", "R6第19問", "R5第16問", "R4第17問"]],
+["homu", "仲裁", "ちゅうさい", "当事者の合意で、第三者（仲裁人）に判断を任せ、その判断に従う紛争解決の方法。", "仲裁判断には確定判決と同じ効力があり、原則として裁判所で争い直すことはできない。非公開で行われ、外国の仲裁判断もニューヨーク条約で執行しやすい。", ["R7第8問", "R5第16問"]],
+["homu", "パリ条約", "パリじょうやく", "特許や商標などの工業所有権を国際的に保護するための条約。内国民待遇、優先権、特許独立の原則が柱。", "優先期間は、特許と実用新案が12か月、意匠と商標が6か月。内国民待遇は、保護を求める国に住所や営業所がなくても受けられる。", ["R8第10問", "R7第13問", "R6第16問", "R4第13問"]],
+["homu", "出願の変更", "しゅつがんの へんこう", "出願した後に、出願の種類を別の種類に変えること。", "特許、実用新案、意匠の出願は互いに変更できるが、商標の出願は特許などに変更できない。査定や審決が確定した後は変更できない。", ["R8第14問", "R8第13問", "R7第12問", "R6第11問", "R5第13問"]],
+["homu", "産業財産権の制度の違い", "さんぎょうざいさんけんの せいどの ちがい", "出願公開は特許と商標、出願審査請求は特許だけ、国内優先権は特許と実用新案だけにある制度。", "特許の出願公開は出願から1年6か月後。出願審査請求は出願から3年以内に誰でもできる。実施していない場合の通常実施権の設定の裁定は、特許と実用新案にある。", ["R8第14問", "R6第12問", "R6第11問", "R5第13問", "R5第10問", "R4第8問"]],
+["homu", "実用新案権", "じつようしんあんけん", "物品の形、構造、組み合わせに関する考案を保護する権利。", "方法は保護の対象にならない。中身の審査なしで登録され、存続期間は出願日から10年。権利を行使するには、実用新案技術評価書を示して警告する必要がある。", ["R5第10問", "R4第12問"]],
+["homu", "意匠権", "いしょうけん", "物品や建築物、画像のデザイン（意匠）を保護する権利。", "存続期間は出願日から25年。2020年から、建築物、内装、画像も登録の対象になった。部分意匠、関連意匠、秘密意匠の制度がある。", ["R8第14問", "R6第15問"]],
+["homu", "商標権", "しょうひょうけん", "商品やサービスに使うマーク（商標）を保護する権利。", "存続期間は登録日から10年で、更新すれば何度でも延ばせる。立体商標のほか、音、色彩、動き、ホログラム、位置の商標も登録できる。", ["R7第12問", "R6第13問", "R5第15問"]],
+["homu", "権利の共有（特許権と著作権）", "けんりの きょうゆう、とっきょけんと ちょさくけん", "特許権の共有者は、ほかの共有者の同意がなくても自分で発明を実施できるが、持分の譲渡やほかの人への実施の許諾には同意が要る。", "著作権の共有では、自分で利用することにも共有者全員の合意が要る。特許権との違いがひっかけ。", ["R5第20問", "R5第11問", "R4第16問", "R4第9問"]],
+["homu", "著作者人格権", "ちょさくしゃ じんかくけん", "公表権、氏名表示権、同一性保持権の3つ。著作者だけに属し、譲渡も相続もできない。", "財産権としての著作権は譲渡できるが、翻案権などは契約で特に書いていないと、譲渡した人に残ると推定される。", ["R7第15問", "R4第15問"]],
+["homu", "職務発明", "しょくむはつめい", "従業者が職務として行った発明。", "契約や勤務規則であらかじめ定めれば、特許を受ける権利を最初から会社のものにできる。その場合、従業者は相当の利益を受ける権利を持つ。", ["R7第9問", "R6第17問"]],
+["homu", "不正競争防止法の主な類型", "ふせいきょうそうぼうしほうの おもな るいけい", "周知表示混同惹起行為（広く知られた表示を使って混同させる）、著名表示冒用行為（著名な表示を自分の表示として使う）、形態模倣商品の提供（他人の商品の形をまねた商品を売る）、信用毀損行為など。", "周知表示は混同が要件で、著名表示は混同が要件ではない。形態模倣は、日本で最初に売られた日から3年間が保護の対象。", ["R8第12問", "R7第11問", "R5第12問", "R4第11問"]],
+["homu", "営業秘密", "えいぎょうひみつ", "不正競争防止法で保護される、企業の秘密の情報。", "秘密として管理されていること（秘密管理性）、事業に役立つこと（有用性）、知られていないこと（非公知性）の3つをすべて満たす必要がある。独創性や新規性は要らない。", ["R7第11問", "R6第12問", "R5第12問"]],
+["homu", "契約不適合責任", "けいやく ふてきごう せきにん", "引き渡した物が、種類、品質、数量などの点で契約の内容に合っていないときに、売主が負う責任。", "買主は、追完（修理や交換）、代金の減額、損害賠償、契約の解除を求められる。種類と品質の不適合は、知った時から1年以内に売主に通知する必要がある。", ["R8第19問", "R7第20問", "R6第20問"]],
+["homu", "保証意思宣明公正証書", "ほしょういし せんめい こうせいしょうしょ", "事業のための借入れについて個人が保証人になるとき、契約の前1か月以内に、公正証書で保証の意思を示さなければならない制度。", "法人が保証人になる場合や、主たる債務者の取締役など経営者が保証人になる場合は要らない。", ["R7第18問", "R4第19問"]],
+["homu", "消滅時効", "しょうめつじこう", "権利を一定期間使わないと、その権利が消える制度。", "一般の債権は、権利を使えると知った時から5年、または使える時から10年。不法行為の損害賠償は、損害と加害者を知った時から3年（生命・身体の侵害は5年）、不法行為の時から20年。", ["R8第21問", "R8第16問", "R6第24問", "R4第18問"]],
+["homu", "使用者責任", "しようしゃせきにん", "従業員が仕事の中で他人に損害を与えたとき、使用者も賠償責任を負うこと。", "使用者が責任を負っても、従業員本人の責任はなくならない。賠償した使用者は、従業員に一定の範囲で求償できる。", ["R8第21問", "R6第24問"]],
+["homu", "共有物の管理", "きょうゆうぶつの かんり", "共有物の保存行為は各共有者が単独で、管理行為は持分の価格の過半数で、変更や処分は全員の同意で行う。", "自分の持分の譲渡は単独でできる。不法に占拠している人への明け渡しの請求は、保存行為として単独でできる。", ["R7第17問", "R5第20問"]],
+["homu", "相続の承認と放棄", "そうぞくの しょうにんと ほうき", "相続人は、相続の開始を知った時から3か月以内に、単純承認、限定承認、放棄のどれかを選ぶ。", "限定承認は相続人全員でしなければならない。放棄した人は、初めから相続人でなかったものとみなされる。一度した承認や放棄は撤回できない。", ["R8第22問", "R4第22問", "R4第21問"]],
+["homu", "遺留分", "いりゅうぶん", "一定の相続人に、最低限保障される遺産の取り分。", "兄弟姉妹には遺留分がない。侵害されたときは、金銭の支払を請求する（遺留分侵害額請求）。相続が始まる前に放棄するには家庭裁判所の許可が要る。", ["R7第22問", "R5第17問"]],
+["homu", "再販売価格の拘束と課徴金減免", "さいはんばいかかくの こうそくと かちょうきんげんめん", "メーカーが小売店の販売価格を決めて守らせる再販売価格の拘束は、独占禁止法の不公正な取引方法として原則違法。", "課徴金減免制度では、公正取引委員会の調査が始まる前に最初に申請した事業者は、課徴金が全額免除される。", ["R6第9問", "R5第7問", "R4第17問"]],
+["homu", "製造物責任法", "せいぞうぶつせきにんほう", "製造物の欠陥で人の生命、身体、財産に損害が出たとき、製造業者などが過失がなくても賠償責任を負う法律。PL法。", "対象は製造または加工された動産。不動産、加工していない農産物、ソフトウェアそのものは対象外。", ["R7第23問", "R5第18問"]],
+["homu", "景品表示法", "けいひんひょうじほう", "商品やサービスの品質や価格についての不当な表示（優良誤認表示、有利誤認表示）や、過大な景品を規制する法律。", "2023年10月から、広告であることを隠すステルスマーケティングも不当表示に指定された。", ["R6第22問", "R5第19問"]],
+["homu", "消費者契約法", "しょうひしゃけいやくほう", "事業者と消費者の契約で、不当な勧誘による契約の取消しや、消費者に一方的に不利な条項の無効を定めた法律。", "事業者どうしの契約には使えない。取り消せる勧誘の類型や、無効になる条項の例が問われる。", ["R8第23問", "R6第23問"]],
+["joho", "デジタルガバナンス・コード", "", "経済産業省が示した、企業がDXを進めるために経営者が取り組むべき事項をまとめた指針。DX認定制度の基準にもなっている。", "経済産業省や情報処理推進機構（IPA）のDXに関する資料（DXレポート、DX推進指標、デジタルスキル標準など）の用語が毎年のように出る。", ["R8第20問", "R7第22問", "R7第21問", "R6第10問", "R4第9問"]],
+["joho", "SQL", "エス・キュー・エル", "リレーショナルデータベースを操作する言語。SELECT 列 FROM 表 WHERE 条件、の形で検索する。", "GROUP BYでグループごとに集計し、HAVINGで集計した後の条件を指定する。COUNTやSUMの結果を読み取る問題が毎年出る。", ["R8第8問", "R7第12問", "R6第8問", "R5第9問", "R4第5問"]],
+["joho", "正規化", "せいきか", "データの重複をなくし、更新したときの矛盾を防ぐために、表を分けて整理すること。", "第1正規形は繰り返し項目をなくす、第2正規形は部分関数従属をなくす、第3正規形は推移的関数従属をなくす。表を見て何正規形かを判定させる。", ["R8第7問", "R7第11問", "R6第7問", "R5第8問"]],
+["joho", "EVM", "イー・ブイ・エム", "アーンドバリュー・マネジメント。計画価値（PV）、出来高（EV）、実コスト（AC）で、プロジェクトの進み具合とコストを管理する手法。", "CPI＝EV÷AC、SPI＝EV÷PV。1未満ならコストの超過やスケジュールの遅れ。今後も同じ効率なら、完成時の総コストの予測は、総予算÷CPI。", ["R8第19問", "R7第23問", "R6第21問", "R5第20問", "R4第19問"]],
+["joho", "主な通信プロトコル", "おもな つうしんプロトコル", "DHCPはIPアドレスの自動割り当て、DNSはドメイン名とIPアドレスの対応づけ、SMTPはメールの送信、POP3とIMAPはメールの受信、NTPは時刻合わせ、MIMEはメールで画像などを送るための規格。", "TCPは信頼性を重視するコネクション型、UDPは速さを重視するコネクションレス型。似た名前の用途の入れ替えがひっかけ。", ["R8第9問", "R7第5問", "R6第9問", "R4第8問", "R4第7問"]],
+["joho", "ブロックチェーン", "", "取引の記録をブロックにまとめて鎖のようにつなぎ、参加者で分散して管理する技術。", "誰でも参加できるパブリック型、特定の組織が管理するプライベート型、複数の組織で管理するコンソーシアム型がある。スマートコントラクトは条件を満たすと自動で実行されるプログラム、NFTは唯一であることを証明するトークン。", ["R8第12問", "R7第6問", "R4第25問"]],
+["joho", "混同行列", "こんどうぎょうれつ", "分類するモデルの予測結果を、実際の正解と予測の組み合わせ（真陽性、偽陽性、偽陰性、真陰性）で整理した表。", "適合率は陽性と予測したうち当たった割合、再現率は実際の陽性のうち見つけられた割合。分母の違いがひっかけ。", ["R8第24問", "R6第23問", "R5第24問"]],
+["joho", "教師あり学習と教師なし学習", "きょうしありがくしゅうと きょうしなしがくしゅう", "正解のラベルがついたデータで学ぶのが教師あり学習、ラベルのないデータから構造を見つけるのが教師なし学習。", "数値を予測する回帰と、カテゴリーを予測する分類は教師あり学習。グループに分けるクラスタリングは教師なし学習。", ["R7第25問", "R4第15問"]],
+["joho", "主なサイバー攻撃", "おもな サイバーこうげき", "ランサムウェア（データを暗号化して身代金を要求する）、DDoS攻撃（大量の通信でサービスを止める）、フィッシング（偽のサイトに誘導して情報を盗む）、ゼロデイ攻撃（修正プログラムが出る前の弱点を突く）など。", "攻撃の名前と説明を入れ替えた選択肢がひっかけ。", ["R8第22問", "R7第19問", "R6第18問"]],
+["joho", "DMZとWAF", "ディー・エム・ゼットと ワフ", "DMZは、外部のネットワークと社内のネットワークの間に置く区画で、Webサーバなど外部に公開するサーバを置く。WAFは、Webアプリケーションへの攻撃を防ぐ仕組み。", "データベースサーバなど重要なサーバは、DMZではなく社内側に置く。WAFが防ぐのはSQLインジェクションなどアプリケーションへの攻撃。", ["R8第23問", "R5第22問"]],
+["joho", "SaaS・PaaS・IaaS", "サース、パース、イアース", "クラウドの提供形態。SaaSはアプリケーションまで、PaaSはOSやミドルウェアなどの実行環境まで、IaaSはサーバやストレージなどの基盤を提供する。", "利用者が自分で管理する範囲は、SaaSが最も小さく、IaaSが最も大きい。どの形態でも、データの管理は利用者の責任になる（責任共有モデル）。", ["R8第18問", "R8第6問", "R6第11問", "R6第6問", "R4第22問"]],
+["joho", "仮想化技術", "かそうかぎじゅつ", "1台の物理サーバの上で、複数の仮想的なコンピュータを動かす技術。", "ハイパーバイザ型は仮想マシンごとにOSを動かす。コンテナ型はホストのOSを共有するので、軽く起動が速い。", ["R8第3問", "R7第2問"]],
+["joho", "スクラム", "", "アジャイル開発の代表的な手法。スプリントと呼ぶ短い期間ごとに開発を繰り返す。", "プロダクトオーナーは何を作るかの優先順位に責任を持ち、スクラムマスターはスクラムがうまく回るよう支援する。役割を入れ替えた選択肢がひっかけ。", ["R7第13問", "R6第14問", "R4第13問"]],
+["joho", "アジャイル開発", "アジャイルかいはつ", "短い期間ごとに、計画、設計、実装、テストを繰り返し、少しずつ完成させる開発手法。", "ウォーターフォール型と違い、仕様の変更に柔軟に対応できる。手法にはスクラムやXP（エクストリーム・プログラミング）がある。開発と運用が連携して素早く更新するのがDevOps。", ["R8第16問", "R7第13問", "R6第14問", "R4第13問"]],
+["joho", "ローコード開発", "ローコードかいはつ", "画面の操作などで、プログラムのコードをほとんど書かずにアプリケーションを開発する手法。", "定型の作業をソフトウェアのロボットに代行させるRPAと混同させる選択肢が出る。", ["R8第13問", "R7第13問"]],
+["joho", "ブラックボックステスト", "", "プログラムの内部の作りを見ずに、入力に対する出力が仕様どおりかを確かめるテスト。", "同値分割や境界値分析を使う。内部の作りに注目して、命令や分岐を網羅するのがホワイトボックステスト。", ["R8第15問", "R7第7問"]],
+["joho", "回帰テスト", "かいきテスト", "プログラムを修正したときに、修正していない部分に悪い影響が出ていないかを確かめるテスト。", "テストの種類の名前と目的を入れ替えた選択肢がひっかけ。", ["R8第15問", "R7第7問"]],
+["joho", "稼働率", "かどうりつ", "システムが正常に動いている時間の割合。MTBF÷（MTBF＋MTTR）で求める。", "直列につないだ場合は稼働率の掛け算、並列は1−（1−A）×（1−B）。信頼性、可用性、保守性、完全性、安全性をまとめてRASISという。", ["R8第10問", "R7第24問", "R7第9問", "R6第20問", "R4第21問"]],
+["joho", "ロールバックとロールフォワード", "", "障害が起きたとき、ロールバックは更新前のログを使って処理の前の状態に戻すこと、ロールフォワードはバックアップに更新後のログを使って障害の直前まで進めること。", "どちらのログを使うかを逆にした選択肢がひっかけ。", ["R6第15問", "R5第5問", "R4第14問"]],
+["joho", "RAID", "レイド", "複数のハードディスクを組み合わせて、1台のように使う技術。", "RAID0はストライピング（速いが冗長性なし）、RAID1はミラーリング（同じデータを2台に書く）、RAID5はデータとパリティを分散して書き、1台壊れても復旧できる。", ["R8第2問", "R5第10問"]],
+["joho", "UXとUI", "ユー・エックスと ユー・アイ", "UIは利用者と製品の接点（画面やボタンなど）、UXは製品やサービスを通じて得られる体験全体。", "2つの定義を入れ替えた選択肢がひっかけ。", ["R8第5問", "R6第5問"]],
+["joho", "JSON", "ジェイソン", "データをキーと値の組で表すテキスト形式。Webでのデータのやり取りによく使われる。", "XMLなどと同じく、半構造化データにあたる。", ["R7第4問", "R5第4問"]],
+["joho", "エコーチェンバー", "", "SNSなどで自分と似た意見ばかりに触れることで、特定の意見が増幅され、それが正しいと思い込んでしまう現象。", "利用者の好みに合う情報ばかりが表示されるフィルターバブルと区別する。", ["R7第14問", "R5第25問"]],
+["joho", "UML", "ユー・エム・エル", "システムの構造や動きを図で表すための、統一されたモデリング言語。", "クラス図、ユースケース図、シーケンス図、アクティビティ図などがある。図の名前と用途の組み合わせが問われる。", ["R5第17問", "R4第11問"]],
+["joho", "SLA", "エス・エル・エー", "サービスの提供者と利用者の間で、稼働率や復旧時間などのサービスの品質を合意した文書。サービスレベル合意書。", "SLAを守るために継続的に管理する活動をSLM（サービスレベル管理）という。ITサービスマネジメントの用語として出る。", ["R5第19問", "R4第18問"]],
+["chusho", "中小企業者の定義", "ちゅうしょうきぎょうしゃの ていぎ", "中小企業基本法の定義。製造業その他は資本金3億円以下または従業員300人以下。卸売業は1億円以下または100人以下。小売業は5,000万円以下または50人以下。サービス業は5,000万円以下または100人以下。", "資本金と従業員数は「または」なので、どちらか一方を満たせばよい。事例の企業に当てはめる形で毎年出る。", ["R8第19問", "R7第21問", "R6第17問", "R5第19問", "R4第18問"]],
+["chusho", "小規模企業者", "しょうきぼ きぎょうしゃ", "中小企業基本法の定義で、製造業その他は従業員20人以下、商業（卸売業・小売業）とサービス業は従業員5人以下の事業者。", "小規模企業者の定義に資本金の基準はない。持続化補助金の対象（宿泊業と娯楽業は20人以下）の当てはめでも出る。", ["R8第31問", "R6第17問", "R4第22問", "R4第18問"]],
+["chusho", "中小企業基本法の基本方針", "ちゅうしょうきぎょう きほんほうの きほんほうしん", "中小企業基本法が掲げる施策の方針。経営の革新と創業の促進、経営基盤の強化、経済的社会的環境の変化への適応の円滑化、資金の供給の円滑化と自己資本の充実の4つ。", "条文の語句を入れ替えた空欄補充が多い。基本理念では、中小企業を多様で活力ある成長発展が図られるべき存在と位置づけている。", ["R8第19問", "R7第21問", "R6第17問", "R5第19問", "R4第18問"]],
+["chusho", "中小企業の数と従業者の割合", "ちゅうしょうきぎょうの かずと じゅうぎょうしゃの わりあい", "日本の企業数のうち、中小企業は約99.7%。従業者数では約7割を占める。", "白書の統計問題で毎年出る。企業数のうち約85%は小規模企業。数字は白書の版で変わるので、受験年度の白書で確かめる。", ["R8第1問", "R7第1問", "R6第2問", "R6第1問", "R4第1問"]],
+["chusho", "取適法", "とりてきほう", "2026年1月施行の、下請法を改正した法律。製造委託などの発注者に、発注内容の明示や支払期日の設定を義務付け、買いたたきなどを禁止する。", "受け取った日から60日以内に支払う必要がある。手形での支払いの禁止、従業員数の基準（300人・100人）の追加、協議に応じない一方的な代金決定の禁止が改正の柱。", ["R8第27問", "R6第23問", "R4第21問"]],
+["chusho", "経営革新計画", "けいえいかくしん けいかく", "中小企業等経営強化法に基づき、新商品の開発や新しい販売方法などの新事業活動に取り組む計画。都道府県知事などが承認する。", "3〜5年の計画で、付加価値額（または1人あたり付加価値額）が年率3%以上、給与支給総額が年率1.5%以上伸びることが目標。付加価値額＝営業利益＋人件費＋減価償却費。", ["R7第29問", "R6第22問", "R5第24問", "R4第20問"]],
+["chusho", "経営力向上計画", "けいえいりょく こうじょう けいかく", "人材育成、財務管理、設備投資などで生産性を高めるための計画。事業分野別の指針に沿って作り、事業を所管する大臣が認定する。", "経営革新計画、経営力向上計画、事業継続力強化計画は、いずれも中小企業等経営強化法に基づく。根拠法を問う形で出る。", ["R6第22問", "R5第23問", "R4第24問"]],
+["chusho", "事業継続力強化計画", "じぎょうけいぞくりょく きょうか けいかく", "中小企業が、自然災害などに備えた防災・減災の事前の対策をまとめた計画。経済産業大臣が認定する。", "認定されると、低い金利の融資（日本政策金融公庫のBCP融資）や補助金の加点などの支援が受けられる。", ["R5第23問", "R4第16問"]],
+["chusho", "セーフティネット保証", "セーフティネットほしょう", "取引先の倒産、災害、業況の悪化などで経営の安定に支障が出ている中小企業に対し、信用保証協会が一般の保証とは別枠で保証する制度。", "利用するには、事業所のある市区町村長の認定が必要。一般の保証の限度額は普通保証2億円・無担保保証8,000万円で、セーフティネット保証は同じ額の別枠。", ["R8第20問", "R7第26問", "R5第18問"]],
+["chusho", "新規開業・スタートアップ支援資金", "しんきかいぎょう スタートアップ しえんしきん", "日本政策金融公庫が、新しく事業を始める人や、事業を始めてからおおむね7年以内の人に行う融資。", "女性、35歳未満、55歳以上の人などは特別な利率になる。年齢の要件や貸付の期間の数字が問われる。", ["R7第20問", "R4第26問"]],
+["chusho", "高度化事業", "こうどかじぎょう", "中小企業が組合などをつくって、工場団地や商店街の整備などに共同で取り組むとき、都道府県と中小企業基盤整備機構が協力して、長期・低利で貸し付ける制度。", "貸付の割合や期間の数字、資金の使い道の範囲が問われる。", ["R6第21問", "R5第22問"]],
+["chusho", "中小企業投資育成株式会社", "ちゅうしょうきぎょう とうしいくせい かぶしきがいしゃ", "中小企業の自己資本を充実させるため、株式の引受けなどで投資する公的な機関。東京、名古屋、大阪にある。", "対象は原則として資本金3億円以下の株式会社。", ["R8第30問", "R6第21問"]],
+["chusho", "経営セーフティ共済", "けいえいセーフティきょうさい", "中小企業倒産防止共済。取引先が倒産したとき、無担保・無保証人で、掛金総額の10倍（最大8,000万円）まで借りられる。", "掛金は月5,000円〜20万円で、法人は損金、個人事業主は必要経費にできる。借りた額の10分の1が掛金の権利額から差し引かれる。", ["R7第23問", "R4第23問"]],
+["chusho", "中小企業退職金共済", "ちゅうしょうきぎょう たいしょくきん きょうさい", "中小企業が従業員の退職金を準備するための国の共済制度。中退共。", "掛金は全額を損金（個人事業主は必要経費）にできる。新しく加入した事業主には、国が掛金の一部を一定期間助成する。", ["R8第22問", "R6第19問"]],
+["chusho", "事業承継税制", "じぎょうしょうけい ぜいせい", "後継者が非上場会社の株式を、贈与や相続で先代の経営者から受け取るとき、贈与税や相続税の納税を猶予し、条件を満たせば免除する制度。", "一般措置と、より手厚い特例措置がある。特例措置は対象の株式の上限や猶予の割合が拡充されているが、期限があるので受験年度の内容を確かめる。", ["R7第30問", "R5第27問"]],
+["chusho", "賃上げ促進税制", "ちんあげそくしん ぜいせい", "従業員の給与を前の年より一定以上増やした企業が、増えた額の一部を法人税（個人事業主は所得税）から差し引ける制度。", "中小企業向けの措置は、賃上げの率に応じて控除率が上がり、教育訓練費などの上乗せがある。", ["R7第24問", "R4第19問"]],
+["chusho", "交際費等の損金算入の特例", "こうさいひとうの そんきんさんにゅうの とくれい", "資本金1億円以下の中小法人は、年800万円までの交際費等の定額控除か、接待飲食費の50%の損金算入の、どちらかを選べる。", "対象となる法人の要件や、割合の数字が問われる。", ["R7第27問", "R4第25問"]],
+["chusho", "小規模事業者持続化補助金", "しょうきぼじぎょうしゃ じぞくか ほじょきん", "小規模事業者が商工会や商工会議所の支援を受けて経営計画を作り、販路開拓などに取り組む費用の一部を補助する制度。", "対象は、商業・サービス業は従業員5人以下、宿泊業・娯楽業と製造業その他は20人以下。補助上限などは公募回ごとに変わる。", ["R8第31問", "R4第22問"]],
+["chusho", "ものづくり補助金", "ものづくりほじょきん", "中小企業の革新的な製品やサービスの開発、生産プロセスの改善のための設備投資などを補助する制度。", "付加価値額や給与支給総額の伸び、事業場内の最低賃金の引上げなどの要件が数字で問われる。要件は公募回ごとに変わるので、受験年度の公募要領で確かめる。", ["R7第22問", "R4第28問"]],
+["chusho", "労働生産性と労働分配率", "ろうどうせいさんせいと ろうどうぶんぱいりつ", "労働生産性は従業員1人あたりの付加価値額（付加価値額÷従業員数）。労働分配率は付加価値額のうち人件費に回した割合（人件費÷付加価値額）。", "白書の統計問題で、企業規模別や業種別の格差が問われる。労働分配率は、企業規模が小さいほど高い傾向にある。", ["R8第14問", "R8第9問", "R7第8問", "R7第6問", "R5第12問", "R4第5問", "R4第4問"]],
+["chusho", "開業率と廃業率", "かいぎょうりつと はいぎょうりつ", "白書では主に、雇用保険の適用事業所が新しくできた割合と、なくなった割合から計算する。", "長期の推移で開業率と廃業率のどちらが高いかや、業種ごとの高低が白書の統計問題で問われる。", ["R8第7問", "R6第10問", "R5第4問", "R4第6問"]],
+["chusho", "借入金依存度と借入金月商倍率", "かりいれきんいぞんどと かりいれきんげっしょうばいりつ", "借入金依存度は借入金÷総資産、借入金月商倍率は借入金÷1か月の売上高。", "白書の統計問題で、企業規模別や業種別の高低が問われる。", ["R8第5問", "R7第10問", "R5第6問", "R4第7問"]],
+["chusho", "損益分岐点比率", "そんえきぶんきてん ひりつ", "損益分岐点売上高÷実際の売上高。低いほど、売上が減っても赤字になりにくい。", "白書の統計問題で、企業規模別の水準や推移が問われる。規模の小さい企業ほど高い傾向にある。", ["R7第13問", "R4第9問"]],
+["chusho", "経営力再構築伴走支援", "けいえいりょく さいこうちく ばんそうしえん", "支援者が経営者との対話と傾聴を通じて、経営者自身が本質的な課題に気づき、自分で解決に向けて動けるように支援するという中小企業庁の考え方。", "支援者が答えを示すのではなく、経営者の気づきと自走を重視する点が問われる。", ["R5第9問", "R4第31問"]],
+["chusho", "中小PMI", "ちゅうしょう ピー・エム・アイ", "M&Aのあとに、経営、業務、意識の統合を進めて、M&Aの効果を出す取組み。PMIはPost Merger Integrationの略。", "中小企業庁が中小PMIガイドラインを作っている。M&Aの成立で終わりではない点が問われる。", ["R5第13問", "R4第30問"]]
+];
+
+const SUBJECTS = [
+  ['keizai','経済学・経済政策','経済'],['zaimu','財務・会計','財務'],['kigyo','企業経営理論','企業経営'],
+  ['unei','運営管理','運営'],['homu','経営法務','法務'],['joho','経営情報システム','情報'],['chusho','中小企業経営・中小企業政策','中小']
+];
+const SUBJ = {}; SUBJECTS.forEach(([k,n,s])=>{ SUBJ[k]={n,s}; });
+const TERMS = RAW.map(([s,t,y,d,p,r])=>({id:t,s,t,y:y||t,d,p,r:r||[]}));
+const SUBJ_ORDER = {}; SUBJECTS.forEach(([k],i)=>{ SUBJ_ORDER[k]=i; });
+function refsText(x){
+  const r = x.r; if(!r.length) return '';
+  const shown = r.slice(0,6).join('、') + (r.length>6 ? ' ほか' : '');
+  return '令和4〜8年度に'+r.length+'問出題（'+shown+'）';
+}
+const BYID = {}; TERMS.forEach(x=>{ BYID[x.id]=x; });
+
+/* ---------- icons ---------- */
+const IC = {
+  speaker:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.6 6a8.6 8.6 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg>',
+  stop:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>',
+  play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5.5v13l10.5-6.5z"/></svg>',
+  pause:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h3.6v14H7zM13.4 5H17v14h-3.6z"/></svg>',
+  prev:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h2.2v14H6zM19 5.5v13L9.5 12z"/></svg>',
+  next:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.8 5H18v14h-2.2zM5 5.5v13L14.5 12z"/></svg>',
+  spark:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.8l1.9 5.3 5.3 1.9-5.3 1.9L12 17.2l-1.9-5.3L4.8 10l5.3-1.9zM18.5 15l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></svg>'
+};
+const $ = s=>document.querySelector(s);
+const $$ = s=>Array.from(document.querySelectorAll(s));
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+/* ---------- state & storage ---------- */
+const LS_KEY = 'shindanshi-drill-v1';
+const S = { subject:'all', dir:'d2t', weakOnly:false, autoRead:false, rate:1, voice:'', order:'seq', gap:3, point:true };
+let prog = {};
+(function loadLocal(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(!raw) return;
+    const o = JSON.parse(raw);
+    if(o && o.prog && typeof o.prog==='object') prog = o.prog;
+    if(o && o.settings) Object.assign(S, o.settings);
+  }catch(e){}
+})();
+if(S.subject!=='all' && !SUBJ[S.subject]) S.subject='all';
+
+let dbRef=null, dbOff=false, dbBusy=false, dbAgain=false, saveTimer=null;
+function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify({prog, settings:S})); }catch(e){} }
+function save(){ saveLocal(); if(dbRef && !dbOff){ clearTimeout(saveTimer); saveTimer=setTimeout(flushDb, 1500); } }
+async function flushDb(){
+  if(!dbRef || dbOff) return;
+  if(dbBusy){ dbAgain=true; return; }
+  dbBusy=true;
+  try{ await dbRef.set({prog, v:1}); }
+  catch(e){ const c=e&&e.code; if(c!=='unavailable' && c!=='resource_exhausted'){ dbOff=true; setSyncLabel(false); } }
+  dbBusy=false;
+  if(dbAgain){ dbAgain=false; flushDb(); }
+}
+function setSyncLabel(cloud){
+  $('#sync-label').textContent = cloud
+    ? '学習の記録は、Claudeのアカウントにも保存しています。同じアカウントなら、スマホとパソコンで続きから学習できます。'
+    : '学習の記録は、このブラウザに保存しています。';
+}
+async function initDb(){
+  try{
+    if(!window.claude || !window.claude.use) return;
+    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    if(!db || !user) return;
+    const uid = await user.id();
+    if(!uid) return;
+    const ref = db.doc('data/users/' + uid + '/progress');
+    const snap = await ref.get();
+    let localNewer = false;
+    const remote = (snap.exists && snap.data() && snap.data().prog) || {};
+    Object.keys(remote).forEach(id=>{
+      const r = remote[id], l = prog[id];
+      if(BYID[id] && r && (!l || (r.t||0) > (l.t||0))) prog[id] = r;
+    });
+    Object.keys(prog).forEach(id=>{ const r=remote[id]; if(!r || (prog[id].t||0) > (r.t||0)) localNewer = true; });
+    dbRef = ref; setSyncLabel(true); saveLocal(); refreshAll(false);
+    if(localNewer) save();
+  }catch(e){}
+}
+
+function lvl(id){ const r=prog[id]; return r ? r.l : -1; }
+const LV_LABEL = {'-1':'未学習','0':'まだ','1':'あやしい','2':'覚えた'};
+function record(id, kind){
+  const had = prog[id];
+  const r = had ? Object.assign({}, had) : {l:0,c:0,w:0,t:0};
+  if(kind==='no'){ r.l=0; r.w++; }
+  else if(kind==='unsure'){ r.l=1; }
+  else if(kind==='yes'){ r.l=2; r.c++; }
+  else if(kind==='right'){ r.l=Math.min(2,(had?had.l:0)+1); r.c++; }
+  else if(kind==='wrong'){ r.l=0; r.w++; }
+  r.t = Date.now(); prog[id]=r; save(); renderStats();
+}
+
+function pool(weak){
+  let a = TERMS.filter(x=>S.subject==='all' || x.s===S.subject);
+  if(weak) a = a.filter(x=>{ const l=lvl(x.id); return l===0 || l===1; });
+  return a;
+}
+const recent = {flash:[], quiz:[]};
+function pickNext(list, mode){
+  const w = x=>{ const l=lvl(x.id); return (l===0?6 : l===-1?4 : l===1?3 : 1) * (1 + x.r.length/3); };
+  let cand = list.filter(x=>!recent[mode].includes(x.id));
+  if(!cand.length) cand = list;
+  const total = cand.reduce((a,x)=>a+w(x),0);
+  let r = Math.random()*total;
+  for(const x of cand){ r-=w(x); if(r<=0) return x; }
+  return cand[cand.length-1];
+}
+function pushRecent(mode, id, size){
+  const arr = recent[mode]; arr.push(id);
+  const max = Math.max(0, Math.min(6, Math.floor(size/2)));
+  while(arr.length>max) arr.shift();
+}
+function maskParts(x){
+  const parts = new Set([x.t]);
+  const m = x.t.match(/^(.*?)（(.*?)）$/);
+  if(m){ parts.add(m[1]); parts.add(m[2]); }
+  const sep = /[ァ-ヶー]/.test(x.t) && !/^[A-Za-z]+(・[A-Za-z]+)+$/.test(x.t) ? /と/ : /と|・/;
+  x.t.replace(/（.*?）/g,'').split(sep).forEach(p=>{ if(p.length>=2) parts.add(p); });
+  return Array.from(parts).filter(Boolean).sort((a,b)=>b.length-a.length);
+}
+function masked(x){ let s=x.d; maskParts(x).forEach(p=>{ s=s.split(p).join('＿＿'); }); return s; }
+function subjTag(el, k, small){ el.textContent = small ? SUBJ[k].s : SUBJ[k].n; el.style.setProperty('--sc','var(--s-'+k+')'); }
+
+/* ---------- speech (browser voice) ---------- */
+const synth = ('speechSynthesis' in window) ? window.speechSynthesis : null;
+let jaVoices=[], curVoice=null, gen=0, speakingBtn=null;
+function initVoices(){
+  if(!synth) return;
+  let all=[]; try{ all = synth.getVoices() || []; }catch(e){}
+  jaVoices = all.filter(v=>/^ja([-_]|$)/i.test(v.lang||''));
+  const prefer = [/Nanami|Keita/i,/Google/i,/Kyoko|O-?ren|Otoya|Hattori/i,/Haruka|Ayumi|Ichiro|Sayaka/i];
+  curVoice = jaVoices.find(v=>v.name===S.voice) || null;
+  if(!curVoice){ for(const re of prefer){ curVoice = jaVoices.find(v=>re.test(v.name)); if(curVoice) break; } }
+  if(!curVoice) curVoice = jaVoices[0] || null;
+  const sel = $('#voice-select');
+  sel.innerHTML = '<option value="">自動で選ぶ</option>' + jaVoices.map(v=>'<option value="'+esc(v.name)+'">'+esc(v.name)+'</option>').join('');
+  sel.value = jaVoices.some(v=>v.name===S.voice) ? S.voice : '';
+  if(all.length && !jaVoices.length) $('#voice-note').textContent='この端末には日本語の音声が見つかりませんでした。読み上げがうまく動かないときは、端末の設定で日本語の読み上げ音声を追加してください。';
+}
+if(synth){
+  initVoices();
+  try{ synth.addEventListener('voiceschanged', initVoices); }catch(e){ synth.onvoiceschanged = initVoices; }
+}
+function readable(s){
+  return String(s)
+    .replace(/＿＿/g,'この用語')
+    .replace(/÷/g,'わる').replace(/×/g,'かける').replace(/[−－]/g,'ひく').replace(/＋/g,'たす').replace(/＝/g,'イコール')
+    .replace(/√/g,'ルート').replace(/〜/g,'から').replace(/β/g,'ベータ').replace(/%/g,'パーセント');
+}
+function chunks(text){
+  const out=[];
+  text.replace(/。/g,'。\n').split('\n').forEach(sen=>{
+    sen = sen.trim(); if(!sen) return;
+    if(sen.length<=90){ out.push(sen); return; }
+    let buf='';
+    sen.replace(/、/g,'、\n').split('\n').forEach(part=>{ if((buf+part).length>70 && buf){ out.push(buf); buf=part; } else buf+=part; });
+    if(buf) out.push(buf);
+  });
+  return out;
+}
+function stopSpeech(){
+  gen++;
+  try{ if(synth && (synth.speaking || synth.pending)) synth.cancel(); }catch(e){}
+  if(LSN.playing){ LSN.playing=false; renderPlayBtn(); releaseWake(); }
+  markSpeaking(null);
+}
+function say(text, tk){
+  return new Promise(res=>{
+    if(!synth){ res(false); return; }
+    const parts = chunks(readable(text)); let i=0;
+    const step = ()=>{
+      if(tk!==gen){ res(false); return; }
+      if(i>=parts.length){ res(true); return; }
+      const c = parts[i++]; let done=false, timer=null;
+      const u = new SpeechSynthesisUtterance(c);
+      u.lang='ja-JP'; if(curVoice) u.voice=curVoice; u.rate=S.rate;
+      const fin = ()=>{ if(done) return; done=true; clearTimeout(timer); step(); };
+      u.onend = fin;
+      u.onerror = e=>{ if(done) return; if(e && (e.error==='interrupted' || e.error==='canceled')){ done=true; clearTimeout(timer); res(false); } else fin(); };
+      const est = c.length*220/S.rate + 4000;
+      const check = ()=>{ if(done) return; if(synth.speaking) timer=setTimeout(check,1000); else fin(); };
+      timer = setTimeout(check, est);
+      try{ synth.speak(u); }catch(e){ fin(); }
+    };
+    step();
+  });
+}
+function wait(ms, tk){ return new Promise(res=>setTimeout(()=>res(tk===gen), ms)); }
+function markSpeaking(btn){
+  if(speakingBtn && speakingBtn!==btn){ setSpeakBtn(speakingBtn,false); }
+  speakingBtn = btn; if(btn) setSpeakBtn(btn,true);
+}
+function setSpeakBtn(btn,on){
+  if(btn.classList.contains('icon-btn')){ btn.innerHTML = on?IC.stop:IC.speaker; btn.setAttribute('aria-pressed', on?'true':'false'); }
+  else { btn.innerHTML = (on?IC.stop:IC.speaker) + '<span>' + (on?'止める':(btn.dataset.label||'聞く')) + '</span>'; }
+}
+/* speak once; pressing the same button again stops it */
+function speakOnce(text, btn){
+  if(btn && speakingBtn===btn){ stopSpeech(); return; }
+  stopSpeech();
+  if(!synth){ toastNoVoice(); return; }
+  const tk = gen;
+  if(btn) markSpeaking(btn);
+  say(text, tk).then(()=>{ if(tk===gen) markSpeaking(null); });
+}
+function toastNoVoice(){ $('#voice-note').textContent='この画面では読み上げを使えません。ほかのブラウザ（Chrome、Safari、Edge）で開くと使えます。'; $('#settings').open=true; }
+
+/* ---------- wake lock (keep screen on while listening) ---------- */
+let wake=null;
+async function requestWake(){ try{ if(navigator.wakeLock) wake = await navigator.wakeLock.request('screen'); }catch(e){ wake=null; } }
+function releaseWake(){ try{ if(wake) wake.release(); }catch(e){} wake=null; }
+
+/* ---------- subjects & stats ---------- */
+function renderSubjects(){
+  const nav = $('#subjects');
+  const all = '<button type="button" class="chip" data-s="all" aria-pressed="'+(S.subject==='all')+'">全科目</button>';
+  nav.innerHTML = all + SUBJECTS.map(([k,n,s])=>'<button type="button" class="chip" data-s="'+k+'" title="'+esc(n)+'" aria-pressed="'+(S.subject===k)+'" style="--sc:var(--s-'+k+')"><span class="dot"></span>'+esc(s)+'</button>').join('');
+}
+function renderStats(){
+  const a = pool(false); const n=a.length || 1;
+  const c = {yes:0,unsure:0,no:0,neu:0};
+  a.forEach(x=>{ const l=lvl(x.id); if(l===2) c.yes++; else if(l===1) c.unsure++; else if(l===0) c.no++; else c.neu++; });
+  $('#st-yes').textContent=c.yes; $('#st-unsure').textContent=c.unsure; $('#st-no').textContent=c.no; $('#st-new').textContent=c.neu;
+  $('#bar-yes').style.width=(c.yes/n*100)+'%'; $('#bar-unsure').style.width=(c.unsure/n*100)+'%'; $('#bar-no').style.width=(c.no/n*100)+'%';
+  $('#total-count').textContent = S.subject==='all' ? '（'+TERMS.length+'語）' : '（'+SUBJ[S.subject].n+' '+a.length+'語）';
+}
+
+/* ---------- flash ---------- */
+const FC = {cur:null, revealed:false};
+function flashNext(){
+  const list = pool(S.weakOnly);
+  const card=$('#flash-card'), empty=$('#fc-empty');
+  if(!list.length){
+    FC.cur=null; card.hidden=true; $('#fc-pre').hidden=true; $('#fc-post').hidden=true; empty.hidden=false;
+    empty.textContent = S.weakOnly ? '苦手な用語（まだ・あやしい）はありません。「苦手だけ」を外すと、すべての用語から出題します。' : '用語がありません。';
+    return;
+  }
+  card.hidden=false; empty.hidden=true;
+  const x = pickNext(list,'flash'); pushRecent('flash', x.id, list.length);
+  FC.cur=x; FC.revealed=false; renderFlash();
+  if(S.autoRead) speakOnce(flashQText(), $('#fc-speak'));
+}
+function flashQText(){ const x=FC.cur; return S.dir==='d2t' ? masked(x) : x.y; }
+function renderFlash(){
+  const x = FC.cur; if(!x) return;
+  subjTag($('#fc-subj'), x.s, false);
+  const l = lvl(x.id); const st=$('#fc-state'); st.textContent=LV_LABEL[l]; st.className='state l'+l;
+  const yomi = (x.y!==x.t) ? '<span class="yomi">'+esc(x.y)+'</span>' : '';
+  if(S.dir==='d2t'){
+    $('#fc-label').textContent='この説明に当てはまる用語は？';
+    $('#fc-q').innerHTML='<p class="q-text">'+esc(masked(x))+'</p>';
+    $('#fc-amain').innerHTML='<p class="a-term">'+esc(x.t)+yomi+'</p>';
+  } else {
+    $('#fc-label').textContent='この用語を説明すると？';
+    $('#fc-q').innerHTML='<p class="q-term">'+esc(x.t)+yomi+'</p>';
+    $('#fc-amain').innerHTML='<p class="a-text">'+esc(x.d)+'</p>';
+  }
+  $('#fc-point').textContent = x.p;
+  $('#fc-refs').textContent = refsText(x);
+  $('#fc-freq').textContent = '出題'+x.r.length+'問';
+  $('#fc-a').hidden = !FC.revealed; $('#fc-pre').hidden = FC.revealed; $('#fc-post').hidden = !FC.revealed;
+}
+function flashReveal(){
+  if(!FC.cur || FC.revealed) return;
+  FC.revealed=true; renderFlash();
+  if(S.autoRead) speakOnce(flashAText(), $('#fc-speak-a'));
+}
+function flashAText(){ const x=FC.cur; return (S.dir==='d2t' ? x.y+'。' : x.d) + ' ポイント。' + x.p; }
+
+/* ---------- quiz ---------- */
+const QZ = {cur:null, choices:[], answered:false, n:0, right:0};
+const KANA = ['ア','イ','ウ','エ'];
+function quizNext(){
+  const list = pool(false);
+  const x = pickNext(list,'quiz'); pushRecent('quiz', x.id, list.length);
+  const others = shuffle(TERMS.filter(t=>t.s===x.s && t.id!==x.id)).slice(0,3);
+  QZ.cur=x; QZ.choices=shuffle([x].concat(others)); QZ.answered=false;
+  $('#qz-no').textContent='第'+(QZ.n+1)+'問';
+  subjTag($('#qz-subj'), x.s, false);
+  $('#qz-q').textContent = masked(x);
+  $('#qz-choices').innerHTML = QZ.choices.map((c,i)=>'<li><button type="button" class="choice" data-id="'+esc(c.id)+'"><span class="bubble">'+KANA[i]+'</span><span class="c-text">'+esc(c.t)+'</span></button></li>').join('');
+  $('#qz-fb').hidden=true; $('#qz-next').hidden=true;
+}
+function quizAnswer(id){
+  if(QZ.answered) return;
+  QZ.answered=true; QZ.n++;
+  const x=QZ.cur, ok = id===x.id; if(ok) QZ.right++;
+  record(x.id, ok?'right':'wrong');
+  $$('#qz-choices .choice').forEach(b=>{
+    b.disabled=true;
+    if(b.dataset.id===id) b.classList.add('picked');
+    if(b.dataset.id===x.id) b.classList.add('right');
+    else if(b.dataset.id===id) b.classList.add('wrong');
+  });
+  const i = QZ.choices.findIndex(c=>c.id===x.id);
+  const v=$('#qz-verdict');
+  v.className='verdict '+(ok?'ok':'ng');
+  v.textContent = ok ? '正解：'+KANA[i]+' '+x.t : '不正解。正解は '+KANA[i]+' '+x.t;
+  $('#qz-point').textContent = x.p;
+  $('#qz-refs').textContent = refsText(x);
+  $('#qz-fb').hidden=false; $('#qz-next').hidden=false;
+  $('#qz-score').textContent='今回 '+QZ.n+'問中 '+QZ.right+'問正解';
+  $('#qz-next').focus({preventScroll:true});
+}
+function quizSpeakText(){
+  const x=QZ.cur;
+  return '次の記述に当てはまる用語として、最も適切なものはどれか。' + masked(x) + QZ.choices.map((c,i)=>KANA[i]+'、'+c.y+'。').join('');
+}
+
+/* ---------- listen ---------- */
+const LSN = {queue:[], i:0, playing:false};
+function rankWeak(x){ const l=lvl(x.id); return l===0?0 : l===1?1 : l===-1?2 : 3; }
+function buildQueue(){
+  let a = pool(false).slice();
+  if(S.order==='shuffle') shuffle(a);
+  else if(S.order==='weak') a.sort((p,q)=>rankWeak(p)-rankWeak(q));
+  else if(S.order==='freq') a.sort((p,q)=>q.r.length-p.r.length);
+  LSN.queue=a; if(LSN.i>=a.length) LSN.i=0;
+}
+function showListen(){
+  const x = LSN.queue[LSN.i]; if(!x) return;
+  subjTag($('#ls-subj'), x.s, false);
+  $('#ls-pos').textContent=(LSN.i+1)+' / '+LSN.queue.length;
+  $('#ls-term').textContent=x.t; $('#ls-def').textContent=x.d; $('#ls-point').textContent=x.p;
+  $('#ls-pointbox').hidden=!S.point;
+  $('#ls-refs').textContent=refsText(x);
+}
+function renderPlayBtn(){
+  const b=$('#ls-play');
+  b.innerHTML = LSN.playing?IC.pause:IC.play;
+  b.setAttribute('aria-label', LSN.playing?'一時停止':'読み上げを始める');
+}
+function setStatus(t){ $('#ls-status').textContent=t; }
+async function playLoop(){
+  stopSpeech();
+  if(!synth){ toastNoVoice(); return; }
+  const tk = gen;
+  LSN.playing=true; renderPlayBtn(); requestWake();
+  while(tk===gen){
+    const x = LSN.queue[LSN.i]; if(!x) break;
+    showListen(); setStatus('読み上げ中');
+    if(!await say(x.y, tk)) break;
+    if(S.gap>0){ setStatus('意味を思い出してみてください'); if(!await wait(S.gap*1000, tk)) break; setStatus('読み上げ中'); }
+    if(!await say(x.d, tk)) break;
+    if(S.point){ if(!await wait(350, tk)) break; if(!await say('ポイント。'+x.p, tk)) break; }
+    if(!await wait(1300, tk)) break;
+    LSN.i++;
+    if(LSN.i>=LSN.queue.length){ LSN.i=0; if(S.order==='shuffle') shuffle(LSN.queue); setStatus('一周しました。最初から続けます'); if(!await wait(1500, tk)) break; }
+  }
+  if(tk===gen){ LSN.playing=false; renderPlayBtn(); releaseWake(); }
+  if(!LSN.playing) setStatus('一時停止中。再生ボタンで、この用語から再開します。');
+}
+function listenMove(d){
+  const was = LSN.playing;
+  stopSpeech();
+  const n=LSN.queue.length; if(!n) return;
+  LSN.i = (LSN.i + d + n) % n; showListen();
+  if(was) playLoop(); else setStatus('再生ボタンで、この用語から読み上げます。');
+}
+
+/* ---------- list ---------- */
+function renderList(){
+  const q = ($('#list-search').value||'').trim();
+  const a = pool(false).filter(x=>!q || [x.t,x.y,x.d,x.p].some(s=>s.indexOf(q)>=0))
+    .sort((p,r)=> (SUBJ_ORDER[p.s]-SUBJ_ORDER[r.s]) || (r.r.length-p.r.length));
+  $('#list-count').textContent = a.length+'語・出題の多い順';
+  $('#term-list').innerHTML = a.map(x=>{
+    const l=lvl(x.id);
+    return '<li><details data-id="'+esc(x.id)+'"><summary><span class="sdot l'+l+'" title="'+LV_LABEL[l]+'"></span><span class="t">'+esc(x.t)+'</span><span class="freq">'+x.r.length+'問</span><span class="tag small" style="--sc:var(--s-'+x.s+')">'+esc(SUBJ[x.s].s)+'</span></summary>'
+      + '<div class="body"><p class="def">'+esc(x.d)+'</p><div class="point"><span>ポイント</span><p>'+esc(x.p)+'</p></div><p class="refs">'+esc(refsText(x))+'</p>'
+      + '<div class="ans-tools"><button type="button" class="ghost" data-act="speak" data-label="聞く">'+IC.speaker+'<span>聞く</span></button>'
+      + '<button type="button" class="ghost ai-btn" data-act="ai">'+IC.spark+'<span>AIに詳しく聞く</span></button></div></div></details></li>';
+  }).join('') || '<li class="empty">見つかりませんでした。別の言葉で探してみてください。</li>';
+}
+
+/* ---------- AI (Claude) ---------- */
+let sampleFn=null, aiTurns=[], aiCtl=null, aiTerm=null, aiLast='';
+function aiPrompt(x){
+  return 'あなたは中小企業診断士の1次試験の受験指導をしている講師です。受験生から、次の用語についてもっと詳しく知りたいと頼まれました。\n\n'
+    + '用語：'+x.t+'\n科目：'+SUBJ[x.s].n+'\n受験生の手元の説明：'+x.d+'\n手元のポイント：'+x.p+'\n過去の出題：'+(refsText(x)||'なし')+'\n\n'
+    + '次の4つの見出しで、合わせて500字程度で解説してください。\n【ひとことで】\n【具体例】\n【試験での問われ方・ひっかけ】\n【セットで覚えたい関連用語】\n\n'
+    + '書き方の決まり：\n・見出しは【】で囲み、Markdownの記号（#や*や-）は使わない。\n・です・ます調で、平易な言葉で書く。専門用語には短い補足を付ける。\n'
+    + '・数値や法令の基準は、確かなものだけ書く。改正が多い制度には「受験年度の法令で確認」と添える。\n'
+    + '・このあと受験生から続けて質問が来たら、同じ決まりで、短めに答える。';
+}
+function disableAI(){ sampleFn=null; document.documentElement.classList.remove('has-ai'); }
+function aiErrText(e){
+  const c = e && e.code;
+  if(['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'].indexOf(c)>=0){ disableAI(); return 'この画面ではAIの解説を使えません。'; }
+  if(c==='rate_limited') return '利用が集中しています。少し時間をおいてから、もう一度お試しください。';
+  if(c==='session_expired') return 'Claudeにもう一度ログインしてから、お試しください。';
+  if(c==='refused') return 'この質問には回答できませんでした。聞き方を変えてお試しください。';
+  if(c==='prompt_too_large') return '会話が長くなりました。いったん閉じて、もう一度開いてください。';
+  return '通信が途中で切れました。もう一度お試しください。';
+}
+function addMsg(role, text){
+  const p=document.createElement('p'); p.className='msg '+role; p.textContent=text;
+  $('#ai-log').appendChild(p); $('#ai-log').scrollTop=$('#ai-log').scrollHeight; return p;
+}
+function openAI(x){
+  if(!sampleFn) return;
+  stopSpeech();
+  aiTerm=x; aiTurns=[{role:'user', content:aiPrompt(x)}]; aiLast='';
+  $('#ai-title').textContent=x.t; $('#ai-log').innerHTML=''; $('#ai-input').value='';
+  const dlg=$('#ai-dialog');
+  if(!dlg.open){ try{ dlg.showModal(); }catch(e){ dlg.setAttribute('open',''); } }
+  runAI(true);
+}
+async function runAI(first){
+  if(!sampleFn) return;
+  if(aiCtl) aiCtl.abort();
+  const ctl = new AbortController(); aiCtl=ctl;
+  const out = addMsg('assistant wait','考えています…（初めてのときは許可の確認が出ます）');
+  $('#ai-send').disabled=true; $('#ai-stop').hidden=false;
+  const opts = {signal:ctl.signal, onText:({text})=>{ out.className='msg assistant'; out.textContent=text; $('#ai-log').scrollTop=$('#ai-log').scrollHeight; }};
+  if(!first) opts.cache=false;
+  try{
+    const turns = aiTurns.length>9 ? [aiTurns[0]].concat(aiTurns.slice(-8)) : aiTurns;
+    const r = await sampleFn(turns, opts);
+    out.className='msg assistant'; out.textContent=r.text; aiLast=r.text;
+    aiTurns.push({role:'assistant', content:r.text});
+    if(r.truncated) addMsg('wait','回答が途中で切れました。続きは「続きを教えて」と送ってください。');
+  }catch(e){
+    if(e && e.code==='cancelled'){ out.className='msg assistant'; out.textContent = e.text || '止めました。'; if(e.text) aiTurns.push({role:'assistant', content:e.text}); }
+    else { out.className='msg wait'; out.textContent = (e && e.text && e.code!=='refused') ? e.text+'\n\n'+aiErrText(e) : aiErrText(e); }
+  }finally{
+    if(aiCtl===ctl){ aiCtl=null; $('#ai-send').disabled=false; $('#ai-stop').hidden=true; }
+  }
+}
+(async function initAI(){
+  try{
+    if(!window.claude || !window.claude.use) return;
+    const s = await window.claude.use('sample');
+    if(s){ sampleFn=s; document.documentElement.classList.add('has-ai'); }
+  }catch(e){}
+})();
+
+/* ---------- routing ---------- */
+const VIEWS=['flash','quiz','listen','list'];
+let view='flash';
+function route(){
+  const h = location.hash.replace('#','');
+  const v = VIEWS.indexOf(h)>=0 ? h : 'flash';
+  if(v!==view && view==='listen' && LSN.playing){ /* keep playing while browsing other tabs */ }
+  view=v;
+  VIEWS.forEach(n=>{ $('#view-'+n).hidden = n!==v; });
+  $$('.tabs a').forEach(a=>{ if(a.dataset.view===v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+  if(v==='quiz' && !QZ.cur) quizNext();
+  if(v==='list') renderList();
+  if(v==='listen'){ if(!LSN.queue.length) buildQueue(); showListen(); }
+  window.scrollTo(0,0);
+}
+function refreshAll(resetCards){
+  renderStats();
+  if(resetCards){ stopSpeech(); recent.flash=[]; recent.quiz=[]; flashNext(); quizNext(); LSN.i=0; buildQueue(); showListen(); }
+  else { renderFlash(); }
+  if(view==='list') renderList();
+}
+
+/* ---------- events ---------- */
+function bind(){
+  // icons
+  $('#fc-speak').innerHTML=IC.speaker; $('#qz-speak').innerHTML=IC.speaker;
+  $('#fc-speak-a').dataset.label='答えを聞く'; setSpeakBtn($('#fc-speak-a'),false);
+  $('#ai-speak').dataset.label='回答を読み上げる'; setSpeakBtn($('#ai-speak'),false);
+  $('#fc-ai').innerHTML=IC.spark+'<span>AIに詳しく聞く</span>'; $('#qz-ai').innerHTML=IC.spark+'<span>AIに詳しく聞く</span>';
+  $('#ls-prev').innerHTML=IC.prev; $('#ls-next').innerHTML=IC.next; renderPlayBtn();
+
+  $('#subjects').addEventListener('click', e=>{
+    const b=e.target.closest('.chip'); if(!b) return;
+    S.subject=b.dataset.s; saveLocal(); renderSubjects(); refreshAll(true);
+  });
+  $$('.seg button').forEach(b=>b.addEventListener('click', ()=>{
+    S.dir=b.dataset.dir; saveLocal();
+    $$('.seg button').forEach(o=>o.setAttribute('aria-pressed', String(o===b)));
+    stopSpeech(); FC.revealed=false; renderFlash();
+  }));
+  const fw=$('#flash-weak'); fw.checked=S.weakOnly; fw.addEventListener('change', ()=>{ S.weakOnly=fw.checked; saveLocal(); recent.flash=[]; flashNext(); });
+  const fa=$('#flash-auto'); fa.checked=S.autoRead; fa.addEventListener('change', ()=>{ S.autoRead=fa.checked; saveLocal(); });
+  $('#fc-reveal').addEventListener('click', flashReveal);
+  $('#fc-speak').addEventListener('click', e=>{ if(FC.cur) speakOnce(flashQText(), e.currentTarget); });
+  $('#fc-speak-a').addEventListener('click', e=>{ if(FC.cur) speakOnce(flashAText(), e.currentTarget); });
+  $('#fc-ai').addEventListener('click', ()=>{ if(FC.cur) openAI(FC.cur); });
+  $('#fc-post').addEventListener('click', e=>{
+    const b=e.target.closest('button[data-g]'); if(!b || !FC.cur) return;
+    record(FC.cur.id, b.dataset.g); stopSpeech(); flashNext();
+  });
+  document.addEventListener('keydown', e=>{
+    if(view!=='flash' || e.target.closest('input,select,textarea,dialog') || e.metaKey || e.ctrlKey || e.altKey) return;
+    if(!FC.revealed && (e.key===' ' || e.key==='Enter') && !e.target.closest('button')){ e.preventDefault(); flashReveal(); }
+    else if(FC.revealed && ['1','2','3'].indexOf(e.key)>=0){ record(FC.cur.id, ['no','unsure','yes'][+e.key-1]); stopSpeech(); flashNext(); }
+  });
+
+  $('#qz-choices').addEventListener('click', e=>{ const b=e.target.closest('.choice'); if(b) quizAnswer(b.dataset.id); });
+  $('#qz-next').addEventListener('click', ()=>{ stopSpeech(); quizNext(); $('#qz-q').scrollIntoView({block:'nearest'}); });
+  $('#qz-speak').addEventListener('click', e=>{ if(QZ.cur) speakOnce(quizSpeakText(), e.currentTarget); });
+  $('#qz-ai').addEventListener('click', ()=>{ if(QZ.cur) openAI(QZ.cur); });
+
+  $('#ls-play').addEventListener('click', ()=>{ if(LSN.playing){ stopSpeech(); setStatus('一時停止中。再生ボタンで、この用語から再開します。'); } else { if(!LSN.queue.length) buildQueue(); playLoop(); } });
+  $('#ls-prev').addEventListener('click', ()=>listenMove(-1));
+  $('#ls-next').addEventListener('click', ()=>listenMove(1));
+  const lo=$('#ls-order'); lo.value=S.order; lo.addEventListener('change', ()=>{ S.order=lo.value; saveLocal(); stopSpeech(); LSN.i=0; buildQueue(); showListen(); setStatus('順番を変えました。再生ボタンで始めます。'); });
+  const lg=$('#ls-gap'); lg.value=String(S.gap); lg.addEventListener('change', ()=>{ S.gap=+lg.value; saveLocal(); });
+  const lr=$('#ls-rate'); lr.value=String(S.rate); if(lr.selectedIndex<0){ S.rate=1; lr.value='1'; }
+  lr.addEventListener('change', ()=>{ S.rate=+lr.value; saveLocal(); });
+  const lp=$('#ls-point-on'); lp.checked=S.point; lp.addEventListener('change', ()=>{ S.point=lp.checked; saveLocal(); showListen(); });
+
+  $('#list-search').addEventListener('input', renderList);
+  $('#term-list').addEventListener('click', e=>{
+    const b=e.target.closest('button[data-act]'); if(!b) return;
+    const x=BYID[b.closest('details').dataset.id]; if(!x) return;
+    if(b.dataset.act==='speak') speakOnce(x.y+'。'+x.d+' ポイント。'+x.p, b);
+    else openAI(x);
+  });
+
+  $('#voice-select').addEventListener('change', e=>{ S.voice=e.target.value; saveLocal(); initVoices(); });
+  $('#voice-test').addEventListener('click', ()=>speakOnce('損益分岐点売上高は、固定費わる限界利益率で求めます。', null));
+
+  // AI dialog
+  $('#ai-close').addEventListener('click', ()=>{ if(aiCtl) aiCtl.abort(); stopSpeech(); $('#ai-dialog').close(); });
+  $('#ai-dialog').addEventListener('close', ()=>{ if(aiCtl) aiCtl.abort(); stopSpeech(); });
+  $('#ai-stop').addEventListener('click', ()=>{ if(aiCtl) aiCtl.abort(); });
+  $('#ai-speak').addEventListener('click', e=>{ if(aiLast) speakOnce(aiLast.replace(/[【】]/g,'、'), e.currentTarget); });
+  $('#ai-form').addEventListener('submit', e=>{
+    e.preventDefault();
+    const q=$('#ai-input').value.trim(); if(!q || aiCtl || !sampleFn) return;
+    $('#ai-input').value=''; addMsg('user', q); aiTurns.push({role:'user', content:q}); runAI(false);
+  });
+
+  // reset
+  $('#reset-area').addEventListener('click', e=>{
+    const t=e.target;
+    if(t.id==='reset-btn'){
+      $('#reset-area').innerHTML='<span class="confirm">すべての用語の記録（覚えた・あやしい・まだ）を消します。元に戻せません。<button type="button" class="danger" id="reset-yes">消す</button><button type="button" id="reset-no">やめる</button></span>';
+    } else if(t.id==='reset-yes'){
+      prog={}; save(); if(dbRef && !dbOff){ clearTimeout(saveTimer); flushDb(); }
+      $('#reset-area').innerHTML='<button type="button" class="linkish" id="reset-btn">学習の記録を消す</button>';
+      refreshAll(true);
+    } else if(t.id==='reset-no'){
+      $('#reset-area').innerHTML='<button type="button" class="linkish" id="reset-btn">学習の記録を消す</button>';
+    }
+  });
+
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && LSN.playing) requestWake(); });
+  window.addEventListener('hashchange', route);
+}
+
+/* ---------- start ---------- */
+$$('.seg button').forEach(o=>o.setAttribute('aria-pressed', String(o.dataset.dir===S.dir)));
+renderSubjects(); bind(); renderStats(); flashNext(); buildQueue(); showListen(); route();
+initDb();
+})();
+</script>
+</body>
+</html>
