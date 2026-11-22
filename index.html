@@ -171,6 +171,29 @@ button{cursor:pointer}
 .sdot{flex:none;width:9px;height:9px;border-radius:50%;background:var(--line)}
 .sdot.l0{background:var(--mark)} .sdot.l1{background:var(--warn)} .sdot.l2{background:var(--ok)}
 .tag.small{font-size:11px;padding:0 8px}
+/* record */
+#rec-drill[hidden]{display:none}
+.rec-sum{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tile .lb{font-size:12px;color:var(--ink-2)}
+.tile .v{font-size:22px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums}
+.tile .v small{font-size:12px;font-weight:400;color:var(--ink-2);margin-left:3px}
+.tile.x .v{color:var(--mark)} .tile.o .v{color:var(--ok)}
+@media (min-width:560px){ .rec-sum{grid-template-columns:repeat(4,minmax(0,1fr))} }
+.rec-h{margin:6px 0 0;font-size:15px;font-weight:700;letter-spacing:.04em}
+.rec-note{margin:0;font-size:12px;line-height:1.7;color:var(--ink-2)}
+.rec-note:empty{display:none}
+.rec-subj{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.rec-subj button{width:100%;display:grid;grid-template-columns:minmax(0,5.5em) minmax(0,1fr) auto;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;text-align:left;color:var(--ink);font-size:13px}
+.rec-subj button[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+.rec-subj .nm{display:flex;align-items:center;gap:6px;min-width:0;overflow-wrap:anywhere}
+.rec-subj .nm .dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--sc)}
+.rec-subj .bar{height:6px}
+.rec-subj .num{font-size:12px;color:var(--ink-2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.rec-weak-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.cw{flex:none;font-size:12px;color:var(--ink-2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.cw .x{color:var(--mark);font-weight:700}
+.term-list .body p.last{margin:0;font-size:12px;color:var(--ink-3)}
 
 /* footer */
 .foot{display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--ink-3);border-top:1px solid var(--line);padding-top:14px}
@@ -182,7 +205,7 @@ button{cursor:pointer}
 
 /* tab bar */
 .tabs{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:max(8px,env(safe-area-inset-left,0px));padding-right:max(8px,env(safe-area-inset-right,0px))}
-.tabs-in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+.tabs-in{max-width:680px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
 .tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 9px;text-decoration:none;color:var(--ink-3);font-size:11.5px;letter-spacing:.04em}
 .tabs a svg{width:22px;height:22px}
 .tabs a[aria-current="page"]{color:var(--mark);font-weight:700}
@@ -346,6 +369,21 @@ dialog.ai::backdrop{background:rgba(10,12,18,.45)}
       </div>
       <ul class="term-list" id="term-list"></ul>
     </section>
+
+    <!-- 学習の記録 -->
+    <section class="view" id="view-record" aria-label="学習の記録" hidden>
+      <div class="rec-sum" id="rec-sum"></div>
+      <p class="rec-note" id="rec-today"></p>
+      <h2 class="rec-h">科目ごとの進み具合</h2>
+      <p class="rec-note">科目を押すと、上の進み具合と下の苦手な用語がその科目だけになります。</p>
+      <ul class="rec-subj" id="rec-subj"></ul>
+      <div class="rec-weak-head">
+        <h2 class="rec-h" id="rec-weak-title">苦手な用語</h2>
+        <button type="button" class="ghost" id="rec-drill">苦手だけで一問一答</button>
+      </div>
+      <p class="rec-note">「まだ」「あやしい」の用語を、間違えた回数の多い順に並べています。×は「まだ」を押した回数と4択の不正解、○は「覚えた」を押した回数と4択の正解です。</p>
+      <ul class="term-list" id="rec-weak"></ul>
+    </section>
   </main>
 
   <footer class="foot">
@@ -374,6 +412,10 @@ dialog.ai::backdrop{background:rgba(10,12,18,.45)}
     <a href="#list" data-view="list">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.5h11M9 12h11M9 17.5h11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="4.8" cy="6.5" r="1.3" fill="currentColor"/><circle cx="4.8" cy="12" r="1.3" fill="currentColor"/><circle cx="4.8" cy="17.5" r="1.3" fill="currentColor"/></svg>
       用語一覧
+    </a>
+    <a href="#record" data-view="record">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20.5h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="5.5" y="12" width="3.4" height="6" rx="1" fill="currentColor"/><rect x="10.3" y="7.5" width="3.4" height="10.5" rx="1" fill="none" stroke="currentColor" stroke-width="1.6"/><rect x="15.1" y="4" width="3.4" height="14" rx="1" fill="currentColor"/></svg>
+      記録
     </a>
   </div>
 </nav>
@@ -1159,6 +1201,46 @@ function renderList(){
   }).join('') || '<li class="empty">見つかりませんでした。別の言葉で探してみてください。</li>';
 }
 
+/* ---------- record ---------- */
+function dayText(t){ const d=new Date(t); return (d.getMonth()+1)+'月'+d.getDate()+'日'; }
+function renderRecord(){
+  const today = new Date().toDateString();
+  let studied=0, yes=0, c=0, w=0, todayN=0;
+  TERMS.forEach(x=>{ const r=prog[x.id]; if(!r) return;
+    studied++; if(r.l===2) yes++; c+=r.c||0; w+=r.w||0;
+    if(r.t && new Date(r.t).toDateString()===today) todayN++; });
+  const p = TERMS.length ? yes/TERMS.length*100 : 0;
+  const pct = (yes && p<1) ? '1%未満' : Math.round(p)+'%';
+  $('#rec-sum').innerHTML =
+      '<div class="tile"><span class="lb">学習した用語</span><span class="v">'+studied+'<small>／'+TERMS.length+'語</small></span></div>'
+    + '<div class="tile"><span class="lb">覚えた</span><span class="v">'+yes+'<small>語（'+pct+'）</small></span></div>'
+    + '<div class="tile o"><span class="lb">○ 覚えた・正解</span><span class="v">'+c+'<small>回</small></span></div>'
+    + '<div class="tile x"><span class="lb">× まだ・不正解</span><span class="v">'+w+'<small>回</small></span></div>';
+  $('#rec-today').textContent = todayN ? '今日は'+todayN+'語を学習しました。' : '';
+  $('#rec-subj').innerHTML = SUBJECTS.map(([k,n,sn])=>{
+    const a=TERMS.filter(x=>x.s===k), m=a.length||1, ct={2:0,1:0,0:0};
+    a.forEach(x=>{ const l=lvl(x.id); if(l>=0) ct[l]++; });
+    return '<li><button type="button" data-s="'+k+'" title="'+esc(n)+'" aria-pressed="'+(S.subject===k)+'" style="--sc:var(--s-'+k+')">'
+      + '<span class="nm"><span class="dot"></span>'+esc(sn)+'</span>'
+      + '<span class="bar" aria-hidden="true"><i class="b-yes" style="width:'+(ct[2]/m*100)+'%"></i><i class="b-unsure" style="width:'+(ct[1]/m*100)+'%"></i><i class="b-no" style="width:'+(ct[0]/m*100)+'%"></i></span>'
+      + '<span class="num">覚えた '+ct[2]+'／'+a.length+'</span></button></li>';
+  }).join('');
+  const weak = pool(false).filter(x=>{ const l=lvl(x.id); return l===0 || l===1; })
+    .sort((p,q)=>{ const a=prog[p.id], b=prog[q.id];
+      return ((b.w||0)-(a.w||0)) || (a.l-b.l) || ((b.t||0)-(a.t||0)); });
+  $('#rec-weak-title').textContent = '苦手な用語'+(S.subject==='all' ? '' : '（'+SUBJ[S.subject].s+'）')+'　'+weak.length+'語';
+  $('#rec-drill').hidden = !weak.length;
+  $('#rec-weak').innerHTML = weak.map(x=>{
+    const r=prog[x.id];
+    return '<li><details data-id="'+esc(x.id)+'"><summary><span class="sdot l'+r.l+'" title="'+LV_LABEL[r.l]+'"></span><span class="t">'+esc(x.t)+'</span>'
+      + '<span class="cw"><span class="x">×'+(r.w||0)+'</span> ○'+(r.c||0)+'</span><span class="tag small" style="--sc:var(--s-'+x.s+')">'+esc(SUBJ[x.s].s)+'</span></summary>'
+      + '<div class="body"><p class="def">'+esc(x.d)+'</p><div class="point"><span>ポイント</span><p>'+esc(x.p)+'</p></div>'
+      + '<p class="last">いまの状態：'+LV_LABEL[r.l]+'　最後に学習した日：'+(r.t ? dayText(r.t) : '－')+'</p>'
+      + '<div class="ans-tools"><button type="button" class="ghost" data-act="speak" data-label="聞く">'+IC.speaker+'<span>聞く</span></button>'
+      + '<button type="button" class="ghost ai-btn" data-act="ai">'+IC.spark+'<span>AIに詳しく聞く</span></button></div></div></details></li>';
+  }).join('') || '<li class="empty">'+(studied ? '苦手な用語（まだ・あやしい）はありません。' : 'まだ記録がありません。一問一答か4択で学習すると、ここに出ます。')+'</li>';
+}
+
 /* ---------- AI (Claude) ---------- */
 let sampleFn=null, aiTurns=[], aiCtl=null, aiTerm=null, aiLast='';
 function aiPrompt(x){
@@ -1222,7 +1304,7 @@ async function runAI(first){
 })();
 
 /* ---------- routing ---------- */
-const VIEWS=['flash','quiz','listen','list'];
+const VIEWS=['flash','quiz','listen','list','record'];
 let view='flash';
 function route(){
   const h = location.hash.replace('#','');
@@ -1233,6 +1315,7 @@ function route(){
   $$('.tabs a').forEach(a=>{ if(a.dataset.view===v) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
   if(v==='quiz' && !QZ.cur) quizNext();
   if(v==='list') renderList();
+  if(v==='record') renderRecord();
   if(v==='listen'){ if(!LSN.queue.length) buildQueue(); showListen(); }
   window.scrollTo(0,0);
 }
@@ -1241,6 +1324,7 @@ function refreshAll(resetCards){
   if(resetCards){ stopSpeech(); recent.flash=[]; recent.quiz=[]; flashNext(); quizNext(); LSN.i=0; buildQueue(); showListen(); }
   else { renderFlash(); }
   if(view==='list') renderList();
+  if(view==='record') renderRecord();
 }
 
 /* ---------- events ---------- */
@@ -1292,11 +1376,22 @@ function bind(){
   const lp=$('#ls-point-on'); lp.checked=S.point; lp.addEventListener('change', ()=>{ S.point=lp.checked; saveLocal(); showListen(); });
 
   $('#list-search').addEventListener('input', renderList);
-  $('#term-list').addEventListener('click', e=>{
+  const listAct = e=>{
     const b=e.target.closest('button[data-act]'); if(!b) return;
     const x=BYID[b.closest('details').dataset.id]; if(!x) return;
     if(b.dataset.act==='speak') speakOnce(x.y+'。'+x.d+' ポイント。'+x.p, b);
     else openAI(x);
+  };
+  $('#term-list').addEventListener('click', listAct);
+  $('#rec-weak').addEventListener('click', listAct);
+  $('#rec-subj').addEventListener('click', e=>{
+    const b=e.target.closest('button[data-s]'); if(!b) return;
+    S.subject = S.subject===b.dataset.s ? 'all' : b.dataset.s;
+    saveLocal(); renderSubjects(); refreshAll(true);
+  });
+  $('#rec-drill').addEventListener('click', ()=>{
+    S.weakOnly=true; $('#flash-weak').checked=true; saveLocal();
+    recent.flash=[]; flashNext(); location.hash='#flash';
   });
 
   $('#voice-select').addEventListener('change', e=>{ S.voice=e.target.value; saveLocal(); initVoices(); });
